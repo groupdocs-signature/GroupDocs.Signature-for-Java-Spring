@@ -2,52 +2,48 @@ package com.groupdocs.ui.signature;
 
 import com.groupdocs.ui.config.CommonConfiguration;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:configuration.yml")
-@ConfigurationProperties("signature")
 public class SignatureConfiguration extends CommonConfiguration {
 
-    @Value("${filesDirectory}")
+    @Value("${signature.filesDirectory}")
     private String filesDirectory;
 
-    @Value("${outputDirectory}")
+    @Value("${signature.outputDirectory}")
     private String outputDirectory;
 
-    @Value("${dataDirectory}")
+    @Value("${signature.dataDirectory}")
     private String dataDirectory;
 
-    @Value("#{new Boolean('${textSignature}')}")
+    @Value("#{new Boolean('${signature.textSignature}')}")
     private Boolean textSignature;
 
-    @Value("#{new Boolean('${imageSignature}')}")
+    @Value("#{new Boolean('${signature.imageSignature}')}")
     private Boolean imageSignature;
 
-    @Value("#{new Boolean('${digitalSignature}')}")
+    @Value("#{new Boolean('${signature.digitalSignature}')}")
     private Boolean digitalSignature;
 
-    @Value("#{new Boolean('${qrCodeSignature}')}")
+    @Value("#{new Boolean('${signature.qrCodeSignature}')}")
     private Boolean qrCodeSignature;
 
-    @Value("#{new Boolean('${barCodeSignature}')}")
+    @Value("#{new Boolean('${signature.barCodeSignature}')}")
     private Boolean barCodeSignature;
 
-    @Value("#{new Boolean('${stampSignature}')}")
+    @Value("#{new Boolean('${signature.stampSignature}')}")
     private Boolean stampSignature;
 
-    @Value("#{new Boolean('${downloadOriginal}')}")
+    @Value("#{new Boolean('${signature.downloadOriginal}')}")
     private Boolean  downloadOriginal;
 
-    @Value("#{new Boolean('${downloadSigned}')}")
+    @Value("#{new Boolean('${signature.downloadSigned}')}")
     private Boolean downloadSigned;
 
-    @Value("#{new Integer('${preloadPageCount}')}")
+    @Value("#{new Integer('${signature.preloadPageCount}')}")
     private Integer preloadPageCount;
 
-    @Value("${defaultDocument}")
+    @Value("${signature.defaultDocument}")
     private String defaultDocument;
 
     public String getFilesDirectory() {
