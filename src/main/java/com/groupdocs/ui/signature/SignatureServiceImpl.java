@@ -17,7 +17,7 @@ import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadedPageEntity;
 import com.groupdocs.ui.signature.model.SignatureDirectory;
 import com.groupdocs.ui.signature.model.request.*;
-import com.groupdocs.ui.signature.model.web.DocumentDescriptionEntity;
+import com.groupdocs.ui.model.response.DocumentDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
@@ -40,12 +40,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +52,7 @@ import static com.groupdocs.ui.signature.PathConstants.DATA_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.OUTPUT_FOLDER;
 import static com.groupdocs.ui.signature.model.SignatureDirectory.*;
 import static com.groupdocs.ui.util.Utils.getFreeFileName;
+import static com.groupdocs.ui.util.Utils.uploadFile;
 
 @Service
 public class SignatureServiceImpl implements SignatureService {
@@ -157,15 +154,20 @@ public class SignatureServiceImpl implements SignatureService {
             }
             List<SignatureFileDescriptionEntity> fileList;
             switch (signatureType) {
-                case "digital":  fileList = signatureLoader.loadFiles(relDirPath, signatureConfiguration.getDataDirectory());
+                case "digital":
+                    fileList = signatureLoader.loadFiles(relDirPath, signatureConfiguration.getDataDirectory());
                     break;
-                case "image": fileList = signatureLoader.loadImageSignatures(relDirPath, signatureConfiguration.getDataDirectory());
+                case "image":
+                    fileList = signatureLoader.loadImageSignatures(relDirPath, signatureConfiguration.getDataDirectory());
                     break;
-                case "stamp": fileList = signatureLoader.loadStampSignatures(relDirPath, signatureConfiguration.getDataDirectory());
+                case "stamp":
+                    fileList = signatureLoader.loadStampSignatures(relDirPath, signatureConfiguration.getDataDirectory());
                     break;
-                case "text": fileList = signatureLoader.loadStampSignatures(relDirPath, signatureConfiguration.getDataDirectory());
+                case "text":
+                    fileList = signatureLoader.loadStampSignatures(relDirPath, signatureConfiguration.getDataDirectory());
                     break;
-                default:  fileList = signatureLoader.loadFiles(relDirPath, signatureConfiguration.getDataDirectory());
+                default:
+                    fileList = signatureLoader.loadFiles(relDirPath, signatureConfiguration.getDataDirectory());
                     break;
             }
             return fileList;
@@ -264,7 +266,7 @@ public class SignatureServiceImpl implements SignatureService {
             DigitalSigner signer = new DigitalSigner(signaturesData.get(0), password);
             // prepare signing options and sign document
             String documentType = signaturesData.get(0).getDocumentType();
-            switch (documentType){
+            switch (documentType) {
                 case "Portable Document Format":
                     // sign document
                     signedDocument.setGuid(signatureHandler.sign(documentGuid, signer.signPdf(), loadOptions, saveOptions).toString());
@@ -305,7 +307,7 @@ public class SignatureServiceImpl implements SignatureService {
             // set signature password if required
             for (int i = 0; i < signaturesData.size(); i++) {
                 SignatureDataEntity signatureDataEntity = signaturesData.get(i);
-                if(signatureDataEntity.getDeleted()){
+                if (signatureDataEntity.getDeleted()) {
                     continue;
                 } else {
                     // check if document type is image
@@ -346,9 +348,9 @@ public class SignatureServiceImpl implements SignatureService {
                 signaturesData.get(0).setDocumentType("image");
             }
 
-            for(int i = 0; i < signaturesData.size(); i++) {
+            for (int i = 0; i < signaturesData.size(); i++) {
                 SignatureDataEntity signatureDataEntity = signaturesData.get(i);
-                if(signatureDataEntity.getDeleted()){
+                if (signatureDataEntity.getDeleted()) {
                     continue;
                 } else {
                     String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
@@ -392,14 +394,12 @@ public class SignatureServiceImpl implements SignatureService {
             SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
             // get xml files root path
             String xmlPath = getFullDataPath((signatureType.equals("qrCode")) ?
-                                                QRCODE_DATA_DIRECTORY.getXMLPath() :
-                                                BARCODE_DATA_DIRECTORY.getXMLPath());
+                    QRCODE_DATA_DIRECTORY.getXMLPath() :
+                    BARCODE_DATA_DIRECTORY.getXMLPath());
             // prepare signing options and sign document
             for (int i = 0; i < signaturesData.size(); i++) {
                 SignatureDataEntity signatureDataEntity = signaturesData.get(i);
-                if(signatureDataEntity.getDeleted()){
-                    continue;
-                } else {
+                if (!signatureDataEntity.getDeleted()) {
                     // get xml data of the QR-Code
                     String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
                     // Load xml data
@@ -443,9 +443,7 @@ public class SignatureServiceImpl implements SignatureService {
             // prepare signing options and sign document
             for (int i = 0; i < signaturesData.size(); i++) {
                 SignatureDataEntity signatureDataEntity = signaturesData.get(i);
-                if(signatureDataEntity.getDeleted()){
-                    continue;
-                } else {
+                if (!signatureDataEntity.getDeleted()) {
                     // get xml data of the Text signature
                     String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
                     // Load xml data
@@ -518,7 +516,7 @@ public class SignatureServiceImpl implements SignatureService {
             // initiate signer object
             String previewPath;
             String xmlPath;
-            QrCodeSigner qrSigner ;
+            QrCodeSigner qrSigner;
             BarCodeSigner barCodeSigner;
             // initiate signature options collection
             SignatureOptionsCollection collection = new SignatureOptionsCollection();
@@ -651,7 +649,7 @@ public class SignatureServiceImpl implements SignatureService {
             logger.error("Exception occurred while saving text signature", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         } finally {
-            if(bufImage != null){
+            if (bufImage != null) {
                 bufImage.flush();
             }
         }
@@ -670,8 +668,8 @@ public class SignatureServiceImpl implements SignatureService {
             String dataDirectoryPath = getFullDataPath(IMAGE_DATA_DIRECTORY.getPath());
             String imagePath = String.format("%s%s%s", dataDirectoryPath, File.separator, imageName);
             File file = new File(imagePath);
-            if (file.exists()){
-                imageName =  getFreeFileName(dataDirectoryPath, imageName).toPath().getFileName().toString();
+            if (file.exists()) {
+                imageName = getFreeFileName(dataDirectoryPath, imageName).toPath().getFileName().toString();
                 imagePath = String.format("%s%s%s", dataDirectoryPath, File.separator, imageName);
                 file = new File(imagePath);
             }
@@ -691,60 +689,29 @@ public class SignatureServiceImpl implements SignatureService {
      */
     @Override
     public SignatureFileDescriptionEntity uploadDocument(MultipartFile content, String url, Boolean rewrite, String signatureType) {
-        InputStream uploadedInputStream = null;
-        try {
-            String fileName;
-            if (StringUtils.isEmpty(url)) {
-                // get the InputStream to store the file
-                uploadedInputStream = content.getInputStream();
-                fileName = content.getOriginalFilename();
-            } else {
-                // get the InputStream from the URL
-                URL fileUrl = URI.create(url).toURL();
-                uploadedInputStream = fileUrl.openStream();
-                fileName = FilenameUtils.getName(fileUrl.getPath());
-            }
-            // get signatures storage path
-            String pathFromSignatureType = signatureType == null ? "" : SignatureDirectory.getPathFromSignatureType(signatureType);
-            String documentStoragePath = StringUtils.isEmpty(pathFromSignatureType) ?
-                    signatureConfiguration.getFilesDirectory() :
-                    getFullDataPath(pathFromSignatureType);
-            // save the file
-            String filePath =  String.format("%s%s%s", documentStoragePath, File.separator, fileName);
-            File file = new File(filePath);
-            // check rewrite mode
-            if (rewrite) {
-                // save file with rewrite if exists
-                Files.copy(uploadedInputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            } else {
-                if (file.exists())
-                {
-                    // get file with new name
-                    file = getFreeFileName(documentStoragePath, fileName);
-                }
-                // save file with out rewriting
-                Files.copy(uploadedInputStream, file.toPath());
-            }
-            SignatureFileDescriptionEntity uploadedDocument = new SignatureFileDescriptionEntity();
-            uploadedDocument.setGuid(String.format("%s%s%s", documentStoragePath, File.separator, fileName));
-            if ("image".equals(signatureType)) {
-                // get page image
+        // get signatures storage path
+        String pathFromSignatureType = signatureType == null ? "" : SignatureDirectory.getPathFromSignatureType(signatureType);
+        String documentStoragePath = StringUtils.isEmpty(pathFromSignatureType) ?
+                signatureConfiguration.getFilesDirectory() :
+                getFullDataPath(pathFromSignatureType);
+        // save the file
+        String filePath = uploadFile(documentStoragePath, content, url, rewrite);
+        // create response data
+        SignatureFileDescriptionEntity uploadedDocument = new SignatureFileDescriptionEntity();
+        uploadedDocument.setGuid(filePath);
+        if ("image".equals(signatureType)) {
+            // get page image
+            try {
                 byte[] bytes = Files.readAllBytes(new File(uploadedDocument.getGuid()).toPath());
                 // encode ByteArray into String
                 String encodedImage = new String(Base64.getEncoder().encode(bytes));
                 uploadedDocument.setImage(encodedImage);
-            }
-            return uploadedDocument;
-        } catch(Exception ex) {
-            logger.error("Exception occurred while uploading document", ex);
-            throw new TotalGroupDocsException(ex.getMessage(), ex);
-        } finally {
-            try {
-                uploadedInputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ex) {
+                logger.error("Exception occurred read images in document", ex);
+                throw new TotalGroupDocsException(ex.getMessage(), ex);
             }
         }
+        return uploadedDocument;
     }
 
     /**
@@ -753,7 +720,7 @@ public class SignatureServiceImpl implements SignatureService {
      * examples, 001, 002, 003, etc
      *
      * @param previewPath path to file folder
-     * @param imageGuid file name
+     * @param imageGuid   file name
      * @return created file
      */
     private File getFile(String previewPath, String imageGuid) {

@@ -7,12 +7,13 @@ import com.groupdocs.ui.model.request.LoadDocumentRequest;
 import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadedPageEntity;
 import com.groupdocs.ui.signature.model.request.*;
-import com.groupdocs.ui.signature.model.web.DocumentDescriptionEntity;
+import com.groupdocs.ui.model.response.DocumentDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
 import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
 import com.groupdocs.ui.util.Utils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,31 +100,29 @@ public class SignatureController {
     @RequestMapping(method = RequestMethod.GET, value = "/downloadDocument")
     public void downloadDocument(@RequestParam(name = "path") String documentGuid,
                                  @RequestParam(name = "signed") Boolean signed,
-                                 HttpServletResponse response){
+                                 HttpServletResponse response) {
+        // get document path
+        String fileName = FilenameUtils.getName(documentGuid);
+        // choose directory
+        SignatureConfiguration signatureConfiguration = signatureService.getSignatureConfiguration();
+        String filesDirectory = signed ? signatureConfiguration.getDataDirectory() + OUTPUT_FOLDER : signatureConfiguration.getFilesDirectory();
+        String pathToDownload = String.format("%s%s%s", filesDirectory, File.separator, fileName);
 
-        File file = new File(documentGuid);
-        String fileName = file.getName();
         // set response content info
-        Utils.addFileDownloadHeaders(response, fileName, file.length());
-        String pathToDownload;
-        if (signed) {
-            String dataDirectory = signatureService.getSignatureConfiguration().getDataDirectory();
-            pathToDownload = String.format("%s%s%s", dataDirectory + OUTPUT_FOLDER, File.separator, fileName);
-        } else {
-            String filesDirectory = signatureService.getSignatureConfiguration().getFilesDirectory();
-            pathToDownload = String.format("%s%s%s", filesDirectory, File.separator, fileName);
-        }
-        // download the document
+        Utils.addFileDownloadHeaders(response, fileName, null);
+
+        long length;
         try (InputStream inputStream = new BufferedInputStream(new FileInputStream(pathToDownload));
              ServletOutputStream outputStream = response.getOutputStream()) {
-
-            IOUtils.copy(inputStream, outputStream);
+            // download the document
+            length = IOUtils.copyLarge(inputStream, outputStream);
         } catch (Exception ex){
             logger.error("Exception in downloading document", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
-    }
 
+        Utils.addFileDownloadLengthHeader(response, length);
+    }
 
     /**
      * Upload document
@@ -159,7 +158,6 @@ public class SignatureController {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
     }
-
 
     /**
      * Sign document with digital signature

@@ -1,4 +1,4 @@
-package com.groupdocs.ui.signature.model.web;
+package com.groupdocs.ui.model.response;
 
 /**
  * DocumentDescriptionEntity

@@ -3,7 +3,7 @@ package com.groupdocs.ui.signature;
 import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadedPageEntity;
 import com.groupdocs.ui.signature.model.request.*;
-import com.groupdocs.ui.signature.model.web.DocumentDescriptionEntity;
+import com.groupdocs.ui.model.response.DocumentDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.model.request.LoadDocumentPageRequest;
 import com.groupdocs.ui.model.request.LoadDocumentRequest;
