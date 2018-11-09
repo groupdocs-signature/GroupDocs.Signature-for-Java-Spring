@@ -56,6 +56,7 @@ public class SignatureController {
      * @return template name
      */
     @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
     public String getView(Map<String, Object> model){
         model.put("globalConfiguration", globalConfiguration);
         logger.debug("signature config: {}", signatureService.getSignatureConfiguration());
