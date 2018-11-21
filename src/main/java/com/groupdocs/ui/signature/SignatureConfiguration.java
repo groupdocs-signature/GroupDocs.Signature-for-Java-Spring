@@ -3,6 +3,12 @@ package com.groupdocs.ui.signature;
 import com.groupdocs.ui.config.CommonConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.PostConstruct;
+
+import static com.groupdocs.ui.config.DefaultDirectories.defaultSignatureDirectory;
+import static com.groupdocs.ui.config.DefaultDirectories.relativePathToAbsolute;
 
 @Component
 public class SignatureConfiguration extends CommonConfiguration {
@@ -45,6 +51,11 @@ public class SignatureConfiguration extends CommonConfiguration {
 
     @Value("${signature.defaultDocument}")
     private String defaultDocument;
+
+    @PostConstruct
+    public void init() {
+        this.filesDirectory = StringUtils.isEmpty(this.filesDirectory) ? defaultSignatureDirectory() : relativePathToAbsolute(this.filesDirectory);
+    }
 
     public String getFilesDirectory() {
         return filesDirectory;
