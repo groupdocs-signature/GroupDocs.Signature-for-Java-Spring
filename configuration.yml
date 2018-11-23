@@ -15,8 +15,8 @@ server:
 ################################################
 application:
   # License path
-  # Absolute path to GroupDocs license file
-  licensePath:  C:/GroupDocs/Java/Signature/GroupDocs.Signature.Java.lic
+  # Absolute or relative path to GroupDocs license file
+  licensePath: Licenses/GroupDocs.Signature.Java.lic
 
 ################################################
 # Common configurations
@@ -47,11 +47,11 @@ common:
 ################################################
 signature:
   # Files directory path
-  # Absolute path to files directory
-  filesDirectory: C:/GroupDocs/Documents/
+  # Absolute or relative path to files directory
+  filesDirectory: DocumentSamples
   # Output directory path
   # Absolute path to signed files directory
-  outputDirectory: C:/GroupDocs/Documents/
+  outputDirectory:
   # Default document
   # Absolute path to default document
   defaultDocument:
@@ -61,7 +61,7 @@ signature:
   preloadPageCount: 0
   # Data directory path
   # Absolute path to signature cache files directory
-  dataDirectory: C:/GroupDocs/Documents/
+  dataDirectory:
   # Enable/disable text signature
   textSignature: true
   # Enable/disable image signature
