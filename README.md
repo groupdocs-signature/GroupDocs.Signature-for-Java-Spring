@@ -1,5 +1,5 @@
 # GroupDocs.Signature-for-Java-Spring Example
-###### version 1.5.0
+###### version 1.6.0
 
 [![Build Status](https://travis-ci.org/groupdocs-signature/GroupDocs.Signature-for-Java-Spring.svg?branch=master)](https://travis-ci.org/groupdocs-signature/GroupDocs.Signature-for-Java-Spring)
 [![Maintainability](https://api.codeclimate.com/v1/badges/001a35ea4151759f0d2a/maintainability)](https://codeclimate.com/github/groupdocs-signature/GroupDocs.Signature-for-Java-Spring/maintainability)
