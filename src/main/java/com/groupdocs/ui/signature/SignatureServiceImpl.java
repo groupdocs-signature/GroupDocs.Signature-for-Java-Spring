@@ -14,10 +14,11 @@ import com.groupdocs.ui.exception.TotalGroupDocsException;
 import com.groupdocs.ui.model.request.LoadDocumentPageRequest;
 import com.groupdocs.ui.model.request.LoadDocumentRequest;
 import com.groupdocs.ui.model.response.FileDescriptionEntity;
+import com.groupdocs.ui.model.response.LoadDocumentEntity;
 import com.groupdocs.ui.model.response.LoadedPageEntity;
+import com.groupdocs.ui.model.response.PageDescriptionEntity;
 import com.groupdocs.ui.signature.model.SignatureDirectory;
 import com.groupdocs.ui.signature.model.request.*;
-import com.groupdocs.ui.model.response.DocumentDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
@@ -181,16 +182,16 @@ public class SignatureServiceImpl implements SignatureService {
      * {@inheritDoc}
      */
     @Override
-    public List<DocumentDescriptionEntity> getDocumentDescription(LoadDocumentRequest loadDocumentRequest) {
+    public LoadDocumentEntity getDocumentDescription(LoadDocumentRequest loadDocumentRequest) {
         try {
             // get document info container
             DocumentDescription documentDescription = signatureHandler.getDocumentDescription(loadDocumentRequest.getGuid(),
                     loadDocumentRequest.getPassword());
-            List<DocumentDescriptionEntity> pagesDescription = new ArrayList<>();
+            List<PageDescriptionEntity> pagesDescription = new ArrayList<>();
             // get info about each document page
             for (int i = 1; i <= documentDescription.getPageCount(); i++) {
                 //initiate custom Document description object
-                DocumentDescriptionEntity description = new DocumentDescriptionEntity();
+                PageDescriptionEntity description = new PageDescriptionEntity();
                 // get current page size
                 java.awt.Dimension pageSize = signatureHandler.getDocumentPageSize(loadDocumentRequest.getGuid(),
                         i,
@@ -204,8 +205,11 @@ public class SignatureServiceImpl implements SignatureService {
                 description.setNumber(i);
                 pagesDescription.add(description);
             }
+            LoadDocumentEntity loadDocumentEntity = new LoadDocumentEntity();
+            loadDocumentEntity.setGuid(loadDocumentRequest.getGuid());
+            loadDocumentEntity.setPages(pagesDescription);
             // return document description
-            return pagesDescription;
+            return loadDocumentEntity;
         } catch (Exception ex) {
             logger.error("Exception occurred while loading document description", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
