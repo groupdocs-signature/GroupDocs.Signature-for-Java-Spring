@@ -34,7 +34,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-import static com.groupdocs.ui.signature.PathConstants.OUTPUT_FOLDER;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -100,20 +99,15 @@ public class SignatureController {
      */
     @RequestMapping(method = RequestMethod.GET, value = "/downloadDocument")
     public void downloadDocument(@RequestParam(name = "path") String documentGuid,
-                                 @RequestParam(name = "signed") Boolean signed,
                                  HttpServletResponse response) {
         // get document path
         String fileName = FilenameUtils.getName(documentGuid);
-        // choose directory
-        SignatureConfiguration signatureConfiguration = signatureService.getSignatureConfiguration();
-        String filesDirectory = signed ? signatureConfiguration.getDataDirectory() + OUTPUT_FOLDER : signatureConfiguration.getFilesDirectory();
-        String pathToDownload = String.format("%s%s%s", filesDirectory, File.separator, fileName);
 
         // set response content info
         Utils.addFileDownloadHeaders(response, fileName, null);
 
         long length;
-        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(pathToDownload));
+        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(documentGuid));
              ServletOutputStream outputStream = response.getOutputStream()) {
             // download the document
             length = IOUtils.copyLarge(inputStream, outputStream);
