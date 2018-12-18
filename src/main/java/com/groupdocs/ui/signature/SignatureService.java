@@ -1,12 +1,12 @@
 package com.groupdocs.ui.signature;
 
-import com.groupdocs.ui.model.response.FileDescriptionEntity;
-import com.groupdocs.ui.model.response.LoadedPageEntity;
-import com.groupdocs.ui.signature.model.request.*;
-import com.groupdocs.ui.model.response.DocumentDescriptionEntity;
-import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.model.request.LoadDocumentPageRequest;
 import com.groupdocs.ui.model.request.LoadDocumentRequest;
+import com.groupdocs.ui.model.response.FileDescriptionEntity;
+import com.groupdocs.ui.model.response.LoadDocumentEntity;
+import com.groupdocs.ui.model.response.LoadedPageEntity;
+import com.groupdocs.ui.signature.model.request.*;
+import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
 import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
@@ -40,7 +40,7 @@ public interface SignatureService {
      * @param loadDocumentRequest document request data
      * @return list of document descriptions
      */
-    List<DocumentDescriptionEntity> getDocumentDescription(LoadDocumentRequest loadDocumentRequest);
+    LoadDocumentEntity getDocumentDescription(LoadDocumentRequest loadDocumentRequest);
 
     /**
      * Load document page

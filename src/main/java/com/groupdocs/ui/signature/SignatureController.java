@@ -5,9 +5,9 @@ import com.groupdocs.ui.exception.TotalGroupDocsException;
 import com.groupdocs.ui.model.request.LoadDocumentPageRequest;
 import com.groupdocs.ui.model.request.LoadDocumentRequest;
 import com.groupdocs.ui.model.response.FileDescriptionEntity;
+import com.groupdocs.ui.model.response.LoadDocumentEntity;
 import com.groupdocs.ui.model.response.LoadedPageEntity;
 import com.groupdocs.ui.signature.model.request.*;
-import com.groupdocs.ui.model.response.DocumentDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
@@ -79,7 +79,7 @@ public class SignatureController {
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadDocumentDescription", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<DocumentDescriptionEntity> loadDocumentDescription(@RequestBody LoadDocumentRequest loadDocumentRequest) {
+    public LoadDocumentEntity loadDocumentDescription(@RequestBody LoadDocumentRequest loadDocumentRequest) {
         return signatureService.getDocumentDescription(loadDocumentRequest);
     }
 
