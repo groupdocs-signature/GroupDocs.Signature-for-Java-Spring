@@ -257,11 +257,16 @@ public class SignatureServiceImpl implements SignatureService {
             final SaveOptions saveOptions = new SaveOptions();
             saveOptions.setOutputType(OutputType.String);
             saveOptions.setOutputFileName(FilenameUtils.getName(documentGuid));
+            saveOptions.setOverwriteExistingFiles(true);
 
             LoadOptions loadOptions = new LoadOptions();
             if (!StringUtils.isEmpty(password)) {
                 loadOptions.setPassword(password);
             }
+
+            String outputPath = FilenameUtils.getFullPath(documentGuid);
+            signatureHandler.getSignatureConfig().setOutputPath(outputPath);
+
             // initiate digital signer
             DigitalSigner signer = new DigitalSigner(signaturesData.get(0), password);
             // prepare signing options and sign document
