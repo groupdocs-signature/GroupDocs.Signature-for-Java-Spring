@@ -98,7 +98,6 @@ public class SignatureServiceImpl implements SignatureService {
         config.setStoragePath(signatureConfiguration.getFilesDirectory());
         config.setCertificatesPath(getFullDataPath(CERTIFICATE_DATA_DIRECTORY.getPath()));
         config.setImagesPath(getFullDataPath(IMAGE_DATA_DIRECTORY.getPath()));
-        config.setOutputPath(signatureConfiguration.getFilesDirectory());
 
         // initialize total instance for the Image mode
         signatureHandler = new SignatureHandler(config);
@@ -565,8 +564,6 @@ public class SignatureServiceImpl implements SignatureService {
             signatureHandler.getSignatureConfig().setOutputPath(previewPath);
             // sign generated image with Optical signature
             signatureHandler.sign(file.toPath().toString(), collection, saveOptions);
-            // set signed documents path back to correct path
-            signatureHandler.getSignatureConfig().setOutputPath(signatureConfiguration.getFilesDirectory());
             // set data for response
             opticalCodeData.setImageGuid(file.toPath().toString());
             opticalCodeData.setHeight(200);
@@ -635,8 +632,6 @@ public class SignatureServiceImpl implements SignatureService {
             signatureHandler.getSignatureConfig().setOutputPath(previewPath);
             // sign generated image with Text
             signatureHandler.sign(file.toPath().toString(), collection, saveOptions);
-            // set signed documents path back to correct path
-            signatureHandler.getSignatureConfig().setOutputPath(signatureConfiguration.getFilesDirectory());
             // set Text data for response
             textData.setImageGuid(file.toPath().toString());
             // get Text preview as Base64 String
@@ -798,18 +793,12 @@ public class SignatureServiceImpl implements SignatureService {
             loadOptions.setPassword(password);
         }
 
-        String extraPath = FilenameUtils.getPath(documentGuid.replaceFirst(signatureConfiguration.getFilesDirectory(), ""));
-        if (!StringUtils.isEmpty(extraPath)) {
-            signatureHandler.getSignatureConfig().setOutputPath(signatureConfiguration.getFilesDirectory() + File.separator + extraPath);
-        }
+        String outputPath = FilenameUtils.getFullPath(documentGuid);
+        signatureHandler.getSignatureConfig().setOutputPath(outputPath);
 
         // sign document
         SignedDocumentEntity signedDocument = new SignedDocumentEntity();
         signedDocument.setGuid(signatureHandler.sign(documentGuid, signsCollection, loadOptions, saveOptions).toString());
-
-        if (!StringUtils.isEmpty(extraPath)) {
-            signatureHandler.getSignatureConfig().setOutputPath(signatureConfiguration.getFilesDirectory());
-        }
 
         return signedDocument;
     }
