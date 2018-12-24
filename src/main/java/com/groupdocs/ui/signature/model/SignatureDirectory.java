@@ -8,6 +8,7 @@ public enum SignatureDirectory {
     BARCODE_DATA_DIRECTORY("/BarCodes"),
     CERTIFICATE_DATA_DIRECTORY("/Certificates"),
     IMAGE_DATA_DIRECTORY("/Image"),
+    IMAGE_UPLOADED_DATA_DIRECTORY("/Image/Uploaded"),
     QRCODE_DATA_DIRECTORY("/ArCodes"),
     STAMP_DATA_DIRECTORY("/Stamps"),
     TEXT_DATA_DIRECTORY("/Text");
@@ -33,11 +34,22 @@ public enum SignatureDirectory {
 
     public static String getPathFromSignatureType(String signatureType) {
         switch (signatureType) {
-            case "digital":  return CERTIFICATE_DATA_DIRECTORY.getPath();
-            case "image": return IMAGE_DATA_DIRECTORY.getPath();
-            case "stamp": return STAMP_DATA_DIRECTORY.getPath();
-            case "text": return TEXT_DATA_DIRECTORY.getPath();
-            default:  return null;
+            case "digital":
+                return CERTIFICATE_DATA_DIRECTORY.getPath();
+            case "image":
+                return IMAGE_UPLOADED_DATA_DIRECTORY.getPath();
+            case "hand":
+                return IMAGE_DATA_DIRECTORY.getPath();
+            case "stamp":
+                return STAMP_DATA_DIRECTORY.getPath();
+            case "text":
+                return TEXT_DATA_DIRECTORY.getPath();
+            case "qrCode":
+                return QRCODE_DATA_DIRECTORY.getPath();
+            case "barCode":
+                return BARCODE_DATA_DIRECTORY.getPath();
+            default:
+                return null;
         }
     }
 }

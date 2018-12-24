@@ -14,6 +14,7 @@ import java.util.*;
 
 import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
+import static com.groupdocs.ui.util.Utils.FILE_DATE_COMPARATOR;
 import static com.groupdocs.ui.util.Utils.FILE_NAME_COMPARATOR;
 import static com.groupdocs.ui.util.Utils.FILE_TYPE_COMPARATOR;
 
@@ -39,7 +40,7 @@ public class SignatureLoader {
         List<File> filesList = Arrays.asList(directory.listFiles());
         try {
             // sort list of files and folders
-            filesList = Ordering.from(FILE_TYPE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
+            filesList = Ordering.from(FILE_DATE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
             Path path = new File(dataPath).toPath();
             for (File file : filesList) {
                 // check if current file/folder is hidden
@@ -112,7 +113,7 @@ public class SignatureLoader {
                     }
                 }
                 // sort list of files and folders
-                filesList = Ordering.from(FILE_TYPE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
+                filesList = Ordering.from(FILE_DATE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
                 Path path = new File(dataPath).toPath();
                 for (File file : filesList) {
                     // check if current file/folder is hidden

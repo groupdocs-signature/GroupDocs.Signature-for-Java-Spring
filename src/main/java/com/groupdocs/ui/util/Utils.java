@@ -17,6 +17,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class Utils {
 
     public static final FileNameComparator FILE_NAME_COMPARATOR = new FileNameComparator();
     public static final FileTypeComparator FILE_TYPE_COMPARATOR = new FileTypeComparator();
+    public static final FileDateComparator FILE_DATE_COMPARATOR = new FileDateComparator();
 
     /**
      * Fill header HTTP response with file data
@@ -220,6 +222,20 @@ public class Utils {
                 return 0;
             }
             return 1;
+        }
+    }
+
+    private static class FileDateComparator implements Comparator<File> {
+        @Override
+        public int compare(File file1, File file2) {
+            try {
+                BasicFileAttributes attr1 = Files.readAttributes(file1.toPath(), BasicFileAttributes.class);
+                BasicFileAttributes attr2 = Files.readAttributes(file2.toPath(), BasicFileAttributes.class);
+                return attr1.creationTime().compareTo(attr2.creationTime());
+            } catch (IOException e) {
+                logger.error("Error comparing files by creation date");
+            }
+            return 0;
         }
     }
 }
