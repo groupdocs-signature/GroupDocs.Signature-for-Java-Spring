@@ -166,7 +166,7 @@ public class SignatureServiceImpl implements SignatureService {
                 case "text":
                 case "qrCode":
                 case "barCode":
-                    fileList = signatureLoader.loadStampSignatures(relDirPath, signatureConfiguration.getDataDirectory());
+                    fileList = signatureLoader.loadStampSignatures(relDirPath, signatureConfiguration.getDataDirectory(), signatureType);
                     break;
                 default:
                     fileList = signatureLoader.loadFiles(relDirPath, signatureConfiguration.getDataDirectory());

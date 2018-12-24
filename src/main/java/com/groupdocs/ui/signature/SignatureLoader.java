@@ -3,6 +3,9 @@ package com.groupdocs.ui.signature;
 import com.google.common.collect.Ordering;
 import com.groupdocs.ui.exception.TotalGroupDocsException;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
+import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
+import com.groupdocs.ui.signature.model.xml.StampXmlEntity;
+import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +47,7 @@ public class SignatureLoader {
             Path path = new File(dataPath).toPath();
             for (File file : filesList) {
                 // check if current file/folder is hidden
-                if (file.isHidden() || file.toPath().equals(path)) {
+                if (file.isHidden() || file.toPath().equals(path) || file.isDirectory()) {
                     // ignore current file and skip to next one
                     continue;
                 } else {
@@ -94,7 +97,7 @@ public class SignatureLoader {
      *
      * @return List<SignatureFileDescriptionEntity>
      */
-    public List<SignatureFileDescriptionEntity> loadStampSignatures(String currentPath, String dataPath) {
+    public List<SignatureFileDescriptionEntity> loadStampSignatures(String currentPath, String dataPath, String signatureType) {
         String imagesPath = currentPath + DATA_PREVIEW_FOLDER;
         String xmlPath = currentPath + DATA_XML_FOLDER;
         File images = new File(imagesPath);
@@ -117,11 +120,16 @@ public class SignatureLoader {
                 Path path = new File(dataPath).toPath();
                 for (File file : filesList) {
                     // check if current file/folder is hidden
-                    if (file.isHidden() || file.toPath().equals(path)) {
+                    if (file.isHidden() || file.toPath().equals(path) || file.isDirectory()) {
                         // ignore current file and skip to next one
                         continue;
                     } else {
                         SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, true);
+                        String fileName = file.getAbsolutePath().replace(DATA_PREVIEW_FOLDER, DATA_XML_FOLDER).replace(FilenameUtils.getExtension(file.getName()), "xml");
+                        if ("qrCode".equals(signatureType) || "barCode".equals(signatureType)) {
+                            OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
+                            fileDescription.setText(opticalCodeData.getText());
+                        }
                         // add object to array list
                         fileList.add(fileDescription);
                     }
