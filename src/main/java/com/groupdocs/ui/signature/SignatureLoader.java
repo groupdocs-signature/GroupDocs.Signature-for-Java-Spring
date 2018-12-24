@@ -3,14 +3,19 @@ package com.groupdocs.ui.signature;
 import com.google.common.collect.Ordering;
 import com.groupdocs.ui.exception.TotalGroupDocsException;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
+import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
@@ -28,9 +33,9 @@ public class SignatureLoader {
     /**
      * Load image signatures
      *
-     * @return List<SignatureFileDescriptionEntity>
      * @param currentPath
      * @param dataPath
+     * @return List<SignatureFileDescriptionEntity>
      */
     public List<SignatureFileDescriptionEntity> loadImageSignatures(String currentPath, String dataPath) {
         File directory = new File(currentPath);
@@ -63,7 +68,7 @@ public class SignatureLoader {
         File directory = new File(currentPath);
         List<File> filesList = Arrays.asList(directory.listFiles());
         try {
-            return getResultFileList(dataPath, filesList ,false);
+            return getResultFileList(dataPath, filesList, false, "");
         } catch (Exception ex) {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
@@ -78,12 +83,12 @@ public class SignatureLoader {
      *
      * @return List<SignatureFileDescriptionEntity>
      */
-    public List<SignatureFileDescriptionEntity> loadStampSignatures(String currentPath, String dataPath) {
+    public List<SignatureFileDescriptionEntity> loadStampSignatures(String currentPath, String dataPath, String signatureType) {
         String imagesPath = currentPath + DATA_PREVIEW_FOLDER;
         String xmlPath = currentPath + DATA_XML_FOLDER;
         File images = new File(imagesPath);
         try {
-            if(images.listFiles() != null) {
+            if (images.listFiles() != null) {
                 List<File> imageFiles = Arrays.asList(images.listFiles());
                 File xmls = new File(xmlPath);
                 List<File> xmlFiles = Arrays.asList(xmls.listFiles());
@@ -95,15 +100,15 @@ public class SignatureLoader {
                         }
                     }
                 }
-                return getResultFileList(dataPath, filesList, true);
+                return getResultFileList(dataPath, filesList, true, signatureType);
             }
             return Collections.EMPTY_LIST;
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
     }
 
-    private List<SignatureFileDescriptionEntity> getResultFileList(String dataPath, List<File> filesList, boolean withImage) throws IOException {
+    private List<SignatureFileDescriptionEntity> getResultFileList(String dataPath, List<File> filesList, boolean withImage, String signatureType) throws IOException, JAXBException {
         List<SignatureFileDescriptionEntity> fileList = new ArrayList<>();
         // sort list of files and folders
         filesList = Ordering.from(FILE_TYPE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
@@ -112,6 +117,11 @@ public class SignatureLoader {
             // check if current file/folder is hidden
             if (checkFile(path, file)) {
                 SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, withImage);
+                if ("qrCode".equals(signatureType) || "barCode".equals(signatureType)) {
+                    String fileName = file.getAbsolutePath().replace(DATA_PREVIEW_FOLDER, DATA_XML_FOLDER).replace(FilenameUtils.getExtension(file.getName()), "xml");
+                    OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
+                    fileDescription.setText(opticalCodeData.getText());
+                }
                 // add object to array list
                 fileList.add(fileDescription);
             }
@@ -122,7 +132,7 @@ public class SignatureLoader {
     /**
      * Create file description
      *
-     * @param file file
+     * @param file      file
      * @param withImage set image
      * @return signature file description
      * @throws IOException

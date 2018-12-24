@@ -158,13 +158,16 @@ public class SignatureServiceImpl implements SignatureService {
                     fileList = signatureLoader.loadFiles(relDirPath, signatureConfiguration.getDataDirectory());
                     break;
                 case "image":
+                case "hand":
                     fileList = signatureLoader.loadImageSignatures(relDirPath, signatureConfiguration.getDataDirectory());
                     break;
                 case "stamp":
                     fileList = signatureLoader.loadStampSignatures(relDirPath, signatureConfiguration.getDataDirectory());
                     break;
                 case "text":
-                    fileList = signatureLoader.loadStampSignatures(relDirPath, signatureConfiguration.getDataDirectory());
+                case "qrCode":
+                case "barCode":
+                    fileList = signatureLoader.loadStampSignatures(relDirPath, signatureConfiguration.getDataDirectory(), signatureType);
                     break;
                 default:
                     fileList = signatureLoader.loadFiles(relDirPath, signatureConfiguration.getDataDirectory());
