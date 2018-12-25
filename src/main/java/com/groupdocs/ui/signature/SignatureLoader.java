@@ -2,10 +2,9 @@ package com.groupdocs.ui.signature;
 
 import com.google.common.collect.Ordering;
 import com.groupdocs.ui.exception.TotalGroupDocsException;
+import com.groupdocs.ui.signature.model.request.DeleteSignatureFileRequest;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
-import com.groupdocs.ui.signature.model.xml.StampXmlEntity;
-import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +12,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
 
 import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
-import static com.groupdocs.ui.util.Utils.FILE_DATE_COMPARATOR;
-import static com.groupdocs.ui.util.Utils.FILE_NAME_COMPARATOR;
-import static com.groupdocs.ui.util.Utils.FILE_TYPE_COMPARATOR;
+import static com.groupdocs.ui.util.Utils.*;
 
 /**
  * SignatureLoader
@@ -125,7 +125,7 @@ public class SignatureLoader {
                         continue;
                     } else {
                         SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, true);
-                        String fileName = file.getAbsolutePath().replace(DATA_PREVIEW_FOLDER, DATA_XML_FOLDER).replace(FilenameUtils.getExtension(file.getName()), "xml");
+                        String fileName = getXmlFilePath(file);
                         if ("qrCode".equals(signatureType) || "barCode".equals(signatureType)) {
                             OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
                             fileDescription.setText(opticalCodeData.getText());
@@ -139,6 +139,23 @@ public class SignatureLoader {
         } catch (Exception ex){
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
+    }
+
+    public void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest) {
+        String signatureType = deleteSignatureFileRequest.getSignatureType();
+        if ("image".equals(signatureType) ||
+                "digital".equals(signatureType)) {
+            new File(deleteSignatureFileRequest.getGuid()).delete();
+        } else {
+            File file = new File(deleteSignatureFileRequest.getGuid());
+            file.delete();
+            String xmlFilePath = getXmlFilePath(file);
+            new File(xmlFilePath).delete();
+        }
+    }
+
+    private String getXmlFilePath(File file) {
+        return file.getAbsolutePath().replace(DATA_PREVIEW_FOLDER, DATA_XML_FOLDER).replace(FilenameUtils.getExtension(file.getName()), "xml");
     }
 
     /**

@@ -49,8 +49,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
-import static com.groupdocs.ui.signature.PathConstants.DATA_FOLDER;
-import static com.groupdocs.ui.signature.PathConstants.OUTPUT_FOLDER;
+import static com.groupdocs.ui.signature.PathConstants.*;
 import static com.groupdocs.ui.signature.model.SignatureDirectory.*;
 import static com.groupdocs.ui.util.Utils.getFreeFileName;
 import static com.groupdocs.ui.util.Utils.uploadFile;
@@ -717,6 +716,11 @@ public class SignatureServiceImpl implements SignatureService {
             }
         }
         return uploadedDocument;
+    }
+
+    @Override
+    public void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest) {
+        signatureLoader.deleteSignatureFile(deleteSignatureFileRequest);
     }
 
     /**
