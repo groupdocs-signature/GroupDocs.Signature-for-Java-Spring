@@ -131,4 +131,11 @@ public interface SignatureService {
      * @return signature file description
      */
     SignatureFileDescriptionEntity uploadDocument(MultipartFile content, String url, Boolean rewrite, String signatureType);
+
+    /**
+     * Delete signature file from local storage
+     *
+     * @param deleteSignatureFileRequest
+     */
+    void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest);
 }

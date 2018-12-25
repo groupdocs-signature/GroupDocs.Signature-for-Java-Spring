@@ -2,6 +2,7 @@ package com.groupdocs.ui.signature;
 
 import com.google.common.collect.Ordering;
 import com.groupdocs.ui.exception.TotalGroupDocsException;
+import com.groupdocs.ui.signature.model.request.DeleteSignatureFileRequest;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
 import org.apache.commons.io.FilenameUtils;
@@ -12,10 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
@@ -127,6 +125,23 @@ public class SignatureLoader {
             }
         }
         return fileList;
+    }
+
+    public void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest) {
+        String signatureType = deleteSignatureFileRequest.getSignatureType();
+        if ("image".equals(signatureType) ||
+                "digital".equals(signatureType)) {
+            new File(deleteSignatureFileRequest.getGuid()).delete();
+        } else {
+            File file = new File(deleteSignatureFileRequest.getGuid());
+            file.delete();
+            String xmlFilePath = getXmlFilePath(file);
+            new File(xmlFilePath).delete();
+        }
+    }
+
+    private String getXmlFilePath(File file) {
+        return file.getAbsolutePath().replace(DATA_PREVIEW_FOLDER, DATA_XML_FOLDER).replace(FilenameUtils.getExtension(file.getName()), "xml");
     }
 
     /**

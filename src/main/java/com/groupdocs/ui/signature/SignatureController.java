@@ -166,6 +166,15 @@ public class SignatureController {
     }
 
     /**
+     * Delete signature file from local storage
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/deleteSignatureFile", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void deleteSignatureFile(@RequestBody DeleteSignatureFileRequest deleteSignatureFileRequest){
+        signatureService.deleteSignatureFile(deleteSignatureFileRequest);
+    }
+
+    /**
      * Sign document with digital signature
      * @return signed document info
      */
