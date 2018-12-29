@@ -9,6 +9,7 @@ import com.groupdocs.ui.model.response.LoadDocumentEntity;
 import com.groupdocs.ui.model.response.PageDescriptionEntity;
 import com.groupdocs.ui.signature.model.request.*;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
+import com.groupdocs.ui.signature.model.web.SignaturePageEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
 import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
@@ -100,6 +101,16 @@ public class SignatureController {
     }
 
     /**
+     * Get fonts
+     * @return list of fonts names
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/getFonts", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<String> getFonts() {
+        return signatureService.getFonts();
+    }
+
+    /**
      * Download document
      * @param response
      * @return document
@@ -146,23 +157,13 @@ public class SignatureController {
     }
 
     /**
-     * Get signature image stream - temporarlly workaround used until release of the GroupDocs.Signature 18.5, after release will be removed
+     * Get signature image stream - temporally workaround used until release of the GroupDocs.Signature 18.5, after release will be removed
      * @return signature image
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadSignatureImage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public PageDescriptionEntity loadSignatureImage(@RequestBody LoadSignatureImageRequest loadSignatureImageRequest) {
-        try {
-            PageDescriptionEntity loadedPage = new PageDescriptionEntity();
-            File file = new File(loadSignatureImageRequest.getGuid());
-            // get page image
-            FileInputStream fileInputStreamReader = new FileInputStream(file);
-            loadedPage.setData(getStringFromStream(fileInputStreamReader));
-            // return loaded page object
-            return loadedPage;
-        }catch (Exception ex){
-            throw new TotalGroupDocsException(ex.getMessage(), ex);
-        }
+    public SignaturePageEntity loadSignatureImage(@RequestBody LoadSignatureImageRequest loadSignatureImageRequest) {
+        return signatureService.loadSignatureImage(loadSignatureImageRequest);
     }
 
     /**

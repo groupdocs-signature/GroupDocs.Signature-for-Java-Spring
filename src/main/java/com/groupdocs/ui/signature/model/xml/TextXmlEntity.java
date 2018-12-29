@@ -14,13 +14,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class TextXmlEntity extends XmlEntity {
     private String encodedImage;
 
-    private String backgroundColor = "rgb(0,0,0)";
+    private String backgroundColor = "rgb(255,255,255)";
     private String fontColor = "rgb(0,0,0)";
-    private String borderColor = "rgb(0,0,0)";
     private String font;
-    private int borderStyle;
     private int fontSize;
-    private int borderWidth;
     private Boolean bold;
     private Boolean italic;
     private Boolean underline;
@@ -49,14 +46,6 @@ public class TextXmlEntity extends XmlEntity {
         this.fontColor = fontColor;
     }
 
-    public String getBorderColor() {
-        return borderColor;
-    }
-
-    public void setBorderColor(String borderColor) {
-        this.borderColor = borderColor;
-    }
-
     public String getFont() {
         return font;
     }
@@ -65,28 +54,12 @@ public class TextXmlEntity extends XmlEntity {
         this.font = font;
     }
 
-    public int getBorderStyle() {
-        return borderStyle;
-    }
-
-    public void setBorderStyle(int borderStyle) {
-        this.borderStyle = borderStyle;
-    }
-
     public int getFontSize() {
         return fontSize;
     }
 
     public void setFontSize(int fontSize) {
         this.fontSize = fontSize;
-    }
-
-    public int getBorderWidth() {
-        return borderWidth;
-    }
-
-    public void setBorderWidth(int borderWidth) {
-        this.borderWidth = borderWidth;
     }
 
     public Boolean getBold() {

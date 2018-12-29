@@ -20,6 +20,7 @@ import com.groupdocs.ui.signature.model.SignatureDirectory;
 import com.groupdocs.ui.signature.model.request.*;
 import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
+import com.groupdocs.ui.signature.model.web.SignaturePageEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
 import com.groupdocs.ui.signature.model.xml.StampXmlEntity;
@@ -44,9 +45,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
+import java.util.*;
 import java.util.List;
 
 import static com.groupdocs.ui.signature.PathConstants.*;
@@ -718,6 +717,27 @@ public class SignatureServiceImpl implements SignatureService {
     @Override
     public void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest) {
         signatureLoader.deleteSignatureFile(deleteSignatureFileRequest);
+    }
+
+    @Override
+    public List<String> getFonts() {
+        GraphicsEnvironment ge = GraphicsEnvironment
+                .getLocalGraphicsEnvironment();
+
+        Font[] allFonts = ge.getAllFonts();
+
+        List<String> response = new ArrayList<>(allFonts.length);
+
+        for (Font font : allFonts) {
+            response.add(font.getFontName());
+        }
+
+        return response;
+    }
+
+    @Override
+    public SignaturePageEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest) {
+        return signatureLoader.loadImage(loadSignatureImageRequest);
     }
 
     /**

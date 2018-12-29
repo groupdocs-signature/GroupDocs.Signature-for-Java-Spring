@@ -7,6 +7,7 @@ import com.groupdocs.ui.model.response.LoadDocumentEntity;
 import com.groupdocs.ui.model.response.PageDescriptionEntity;
 import com.groupdocs.ui.signature.model.request.*;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
+import com.groupdocs.ui.signature.model.web.SignaturePageEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
 import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
@@ -115,7 +116,6 @@ public interface SignatureService {
     TextXmlEntity saveText(SaveTextRequest saveTextRequest);
 
     /**
-     *
      * @param saveImageRequest save signature request data
      * @return signature file description
      */
@@ -124,9 +124,9 @@ public interface SignatureService {
     /**
      * Upload document
      *
-     * @param content document content
-     * @param url document url
-     * @param rewrite flag for rewrite
+     * @param content       document content
+     * @param url           document url
+     * @param rewrite       flag for rewrite
      * @param signatureType type of signature
      * @return signature file description
      */
@@ -138,4 +138,13 @@ public interface SignatureService {
      * @param deleteSignatureFileRequest
      */
     void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest);
+
+    /**
+     * Get list of fonts names
+     *
+     * @return list of fonts names
+     */
+    List<String> getFonts();
+
+    SignaturePageEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest);
 }
