@@ -2,15 +2,19 @@ package com.groupdocs.ui.signature;
 
 import com.google.common.collect.Ordering;
 import com.groupdocs.ui.exception.TotalGroupDocsException;
+import com.groupdocs.ui.model.response.LoadedPageEntity;
 import com.groupdocs.ui.signature.model.request.DeleteSignatureFileRequest;
+import com.groupdocs.ui.signature.model.request.LoadSignatureImageRequest;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
+import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -184,4 +188,24 @@ public class SignatureLoader {
         return fileDescription;
     }
 
+    public LoadedPageEntity loadImage(LoadSignatureImageRequest loadSignatureImageRequest) {
+        try {
+            LoadedPageEntity loadedPage = new LoadedPageEntity();
+            // get page image
+            File file = new File(loadSignatureImageRequest.getGuid());
+            byte[] bytes = Files.readAllBytes(file.toPath());
+            // encode ByteArray into String
+            String encodedImage = new String(Base64.getEncoder().encode(bytes));
+            loadedPage.setPageImage(encodedImage);
+            if ("text".equals(loadSignatureImageRequest.getSignatureType())) {
+                String fileName = getXmlFilePath(file);
+                TextXmlEntity textXmlEntity = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
+                loadedPage.setProps(textXmlEntity);
+            }
+            // return loaded page object
+            return loadedPage;
+        }catch (Exception ex){
+            throw new TotalGroupDocsException(ex.getMessage(), ex);
+        }
+    }
 }

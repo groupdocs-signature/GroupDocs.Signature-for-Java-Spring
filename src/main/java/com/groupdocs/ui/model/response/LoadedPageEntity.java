@@ -1,5 +1,7 @@
 package com.groupdocs.ui.model.response;
 
+import com.groupdocs.ui.signature.model.xml.XmlEntity;
+
 /**
  * LoadedPageEntity
  *
@@ -9,6 +11,7 @@ public class LoadedPageEntity {
     private String pageHtml;
     private String angle;
     private String pageImage;
+    private XmlEntity props;
 
     /**
      * Get page as html
@@ -58,4 +61,11 @@ public class LoadedPageEntity {
         this.pageImage = pageImage;
     }
 
+    public void setProps(XmlEntity props) {
+        this.props = props;
+    }
+
+    public XmlEntity getProps() {
+        return props;
+    }
 }

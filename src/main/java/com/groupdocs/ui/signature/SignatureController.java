@@ -89,8 +89,18 @@ public class SignatureController {
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadDocumentPage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public LoadedPageEntity loadDocumentPage(@RequestBody LoadDocumentPageRequest loadDocumentPageRequest){
+    public LoadedPageEntity loadDocumentPage(@RequestBody LoadDocumentPageRequest loadDocumentPageRequest) {
         return signatureService.loadDocumentPage(loadDocumentPageRequest);
+    }
+
+    /**
+     * Get fonts
+     * @return list of fonts names
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/getFonts", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<String> getFonts() {
+        return signatureService.getFonts();
     }
 
     /**
@@ -140,24 +150,13 @@ public class SignatureController {
     }
 
     /**
-     * Get signature image stream - temporarlly workaround used until release of the GroupDocs.Signature 18.5, after release will be removed
+     * Get signature image stream - temporally workaround used until release of the GroupDocs.Signature 18.5, after release will be removed
      * @return signature image
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadSignatureImage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public LoadedPageEntity loadSignatureImage(@RequestBody LoadSignatureImageRequest loadSignatureImageRequest) {
-        try {
-            LoadedPageEntity loadedPage = new LoadedPageEntity();
-            // get page image
-            byte[] bytes = Files.readAllBytes(new File(loadSignatureImageRequest.getGuid()).toPath());
-            // encode ByteArray into String
-            String encodedImage = new String(Base64.getEncoder().encode(bytes));
-            loadedPage.setPageImage(encodedImage);
-            // return loaded page object
-            return loadedPage;
-        }catch (Exception ex){
-            throw new TotalGroupDocsException(ex.getMessage(), ex);
-        }
+        return signatureService.loadSignatureImage(loadSignatureImageRequest);
     }
 
     /**

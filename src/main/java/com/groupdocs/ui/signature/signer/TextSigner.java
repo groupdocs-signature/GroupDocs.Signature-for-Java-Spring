@@ -65,9 +65,6 @@ public class TextSigner extends Signer{
         signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
         // specify extended appearance options
         PdfTextAnnotationAppearance appearance = new PdfTextAnnotationAppearance();
-        appearance.setBorderColor(getColor(textData.getBorderColor()));
-        appearance.setBorderStyle(textData.getBorderStyle());
-        appearance.setBorderWidth(textData.getBorderWidth());
         signOptions.setAppearance(appearance);
         return signOptions;
     }
@@ -114,10 +111,6 @@ public class TextSigner extends Signer{
         signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
         //type of implementation
         signOptions.setSignatureImplementation(ImagesTextSignatureImplementation.TextAsImage);
-        // setup border settings
-        signOptions.setBorderColor(getColor(textData.getBorderColor()));
-        signOptions.setBorderDashStyle(textData.getBorderStyle());
-        signOptions.setBorderWeight(textData.getBorderWidth());
         return signOptions;
     }
 
@@ -150,10 +143,6 @@ public class TextSigner extends Signer{
         int reductionSize = getReductionSize(imageHeight);
         signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
         signOptions.setSignatureImplementation(WordsTextSignatureImplementation.TextAsImage);
-        // setup border settings
-        signOptions.setBorderColor(getColor(textData.getBorderColor()));
-        signOptions.setBorderDashStyle(textData.getBorderStyle());
-        signOptions.setBorderWeight(textData.getBorderWidth());
         return signOptions;
     }
 
@@ -187,10 +176,6 @@ public class TextSigner extends Signer{
         // set reduction size - required to recalculate Text resizing in the UI
         int reductionSize = getReductionSize(imageHeight);
         signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
-        // setup border settings
-        signOptions.setBorderColor(getColor(textData.getBorderColor()));
-        signOptions.setBorderDashStyle(textData.getBorderStyle());
-        signOptions.setBorderWeight(textData.getBorderWidth());
         signOptions.setBorderVisiblity(true);
         return signOptions;
     }
@@ -225,9 +210,6 @@ public class TextSigner extends Signer{
         signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
         //type of implementation
         signOptions.setSignatureImplementation(SlidesTextSignatureImplementation.TextAsImage);
-        // setup border settings
-        signOptions.setBorderColor(getColor(textData.getBorderColor()));
-        signOptions.setBorderWeight(textData.getBorderWidth());
         return signOptions;
     }
 }

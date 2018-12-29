@@ -44,9 +44,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
+import java.util.*;
 import java.util.List;
 
 import static com.groupdocs.ui.signature.PathConstants.*;
@@ -721,6 +719,27 @@ public class SignatureServiceImpl implements SignatureService {
     @Override
     public void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest) {
         signatureLoader.deleteSignatureFile(deleteSignatureFileRequest);
+    }
+
+    @Override
+    public List<String> getFonts() {
+        GraphicsEnvironment ge = GraphicsEnvironment
+                .getLocalGraphicsEnvironment();
+
+        Font[] allFonts = ge.getAllFonts();
+
+        List<String> response = new ArrayList<>(allFonts.length);
+
+        for (Font font : allFonts) {
+            response.add(font.getFontName());
+        }
+
+        return response;
+    }
+
+    @Override
+    public LoadedPageEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest) {
+        return signatureLoader.loadImage(loadSignatureImageRequest);
     }
 
     /**
