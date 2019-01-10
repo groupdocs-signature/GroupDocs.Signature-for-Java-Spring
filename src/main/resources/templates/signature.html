@@ -37,25 +37,18 @@
 <div id="element"></div>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    $('#element').viewer({
+    $('#element').signature({
         /*[+
         applicationPath: 'http://' + [[${globalConfiguration.server.hostAddress}]] + ':' + [[${globalConfiguration.server.httpPort}]] + '/signature',
         +]*/
         defaultDocument: /*[[${signatureConfiguration.defaultDocument}]]*/'',
-        htmlMode: false,
         preloadPageCount: /*[[${signatureConfiguration.preloadPageCount}]]*/'',
-        zoom : false,
         pageSelector: /*[[${signatureConfiguration.pageSelector}]]*/'',
-        search: false,
-        thumbnails: false,
-        rotate: false,
         download: /*[[${signatureConfiguration.download}]]*/'',
         upload: /*[[${signatureConfiguration.upload}]]*/'',
         print: /*[[${signatureConfiguration.print}]]*/'',
         browse: /*[[${signatureConfiguration.browse}]]*/'',
-        rewrite: /*[[${signatureConfiguration.rewrite}]]*/''
-    });
-    $('#element').signature({
+        rewrite: /*[[${signatureConfiguration.rewrite}]]*/'',
         textSignature: /*[[${signatureConfiguration.textSignature}]]*/'',
         imageSignature:  /*[[${signatureConfiguration.imageSignature}]]*/'',
         digitalSignature:  /*[[${signatureConfiguration.digitalSignature}]]*/'',
