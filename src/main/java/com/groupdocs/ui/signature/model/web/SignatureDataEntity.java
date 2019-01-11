@@ -11,8 +11,6 @@ public class SignatureDataEntity {
     private String  address;
     private String  date;
     private String  signaturePassword;
-    private String  signatureComment;
-    private String documentType;
     private String signatureGuid;
     private String signatureType;
     private int pageNumber;
@@ -69,22 +67,6 @@ public class SignatureDataEntity {
 
     public void setSignaturePassword(String signaturePassword) {
         this.signaturePassword = signaturePassword;
-    }
-
-    public String getSignatureComment() {
-        return signatureComment;
-    }
-
-    public void setSignatureComment(String signatureComment) {
-        this.signatureComment = signatureComment;
-    }
-
-    public String getDocumentType() {
-        return documentType;
-    }
-
-    public void setDocumentType(String documentType) {
-        this.documentType = documentType;
     }
 
     public String getSignatureType() {

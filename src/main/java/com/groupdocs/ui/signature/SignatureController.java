@@ -8,6 +8,7 @@ import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadDocumentEntity;
 import com.groupdocs.ui.model.response.PageDescriptionEntity;
 import com.groupdocs.ui.signature.model.request.*;
+import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignaturePageEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
@@ -31,11 +32,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static com.groupdocs.ui.signature.PathConstants.OUTPUT_FOLDER;
-import static com.groupdocs.ui.util.Utils.getStringFromStream;
+import static com.groupdocs.ui.signature.SignatureType.*;
 import static com.groupdocs.ui.util.Utils.setLocalPort;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
@@ -176,54 +178,61 @@ public class SignatureController {
     }
 
     /**
-     * Sign document with digital signature
+     * Sign document with signatures
      * @return signed document info
      */
-    @RequestMapping(method = RequestMethod.POST, value = "/signDigital", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, value = "/sign", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public SignedDocumentEntity signDigital(@RequestBody SignDocumentRequest signDocumentRequest){
-        return signatureService.signDigital(signDocumentRequest);
-    }
-
-
-    /**
-     * Sign document with image signature
-     * @return signed document info
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/signImage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SignedDocumentEntity signImage(@RequestBody SignDocumentRequest signDocumentRequest){
-        return signatureService.signImage(signDocumentRequest);
-    }
-
-    /**
-     * Sign document with stamp signature
-     * @return signed document info
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/signStamp", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SignedDocumentEntity signStamp(@RequestBody SignDocumentRequest signDocumentRequest){
-        return signatureService.signStamp(signDocumentRequest);
-    }
-
-    /**
-     * Sign document with Optical signature
-     * @return signed document info
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/signOptical", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SignedDocumentEntity signOptical(@RequestBody SignDocumentRequest signDocumentRequest){
-        return signatureService.signOptical(signDocumentRequest);
-    }
-
-    /**
-     * Sign document with Text signature
-     * @return signed document info
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/signText", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SignedDocumentEntity signText(@RequestBody SignDocumentRequest signDocumentRequest){
-        return signatureService.signText(signDocumentRequest);
+        List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
+        if (signaturesData == null || signaturesData.isEmpty()) {
+            throw new IllegalArgumentException("Sign data is empty");
+        }
+        String documentGuid = signDocumentRequest.getGuid();
+        String password = signDocumentRequest.getPassword();
+        String documentType = signDocumentRequest.getDocumentType();
+        SignedDocumentEntity signedDocumentEntity = new SignedDocumentEntity();
+        List<SignatureDataEntity> images = new ArrayList<>();
+        List<SignatureDataEntity> texts = new ArrayList<>();
+        List<SignatureDataEntity> codes = new ArrayList<>();
+        List<SignatureDataEntity> stamps = new ArrayList<>();
+        for (int i = 0; i < signaturesData.size(); i++) {
+            SignatureDataEntity signatureDataEntity = signaturesData.get(i);
+            switch (signatureDataEntity.getSignatureType()) {
+                case TEXT:
+                    texts.add(signatureDataEntity);
+                    break;
+                case DIGITAL:
+                    signedDocumentEntity = signatureService.signDigital(documentGuid, password, signatureDataEntity, documentType);
+                    break;
+                case IMAGE:
+                case HAND:
+                    images.add(signatureDataEntity);
+                    break;
+                case STAMP:
+                    stamps.add(signatureDataEntity);
+                    break;
+                case QR_CODE:
+                case BAR_CODE:
+                    codes.add(signatureDataEntity);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Signature type is wrong");
+            }
+        }
+        if (!images.isEmpty()) {
+            signedDocumentEntity = signatureService.signImage(documentGuid, password, documentType, images);
+        }
+        if (!texts.isEmpty()) {
+            signedDocumentEntity = signatureService.signText(documentGuid, password, documentType, texts);
+        }
+        if (!stamps.isEmpty()) {
+            signedDocumentEntity = signatureService.signStamp(documentGuid, password, documentType, stamps);
+        }
+        if (!codes.isEmpty()) {
+            signedDocumentEntity = signatureService.signOptical(documentGuid, password, documentType, codes);
+        }
+        return signedDocumentEntity;
     }
 
     /**

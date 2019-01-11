@@ -66,7 +66,6 @@ public class DigitalSigner extends Signer{
         SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yy");
         // setup digital signature options
         WordsSignDigitalOptions wordsSignOptions = new WordsSignDigitalOptions(signatureData.getSignatureGuid());
-        wordsSignOptions.getSignature().setComments(signatureData.getSignatureComment());
         if(signatureData.getDate() != null && !signatureData.getDate().isEmpty()) {
             wordsSignOptions.getSignature().setSignTime(formatter.parse(signatureData.getDate()));
         }
@@ -84,7 +83,6 @@ public class DigitalSigner extends Signer{
         // initiate date formatter
         SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yy");
         CellsSignDigitalOptions cellsSignOptions = new CellsSignDigitalOptions(signatureData.getSignatureGuid());
-        cellsSignOptions.getSignature().setComments(signatureData.getSignatureComment());
         if(signatureData.getDate() != null && !signatureData.getDate().isEmpty()) {
             cellsSignOptions.getSignature().setSignTime(formatter.parse(signatureData.getDate()));
         }
