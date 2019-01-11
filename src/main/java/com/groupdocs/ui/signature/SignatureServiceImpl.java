@@ -7,6 +7,7 @@ import com.groupdocs.signature.handler.SignatureHandler;
 import com.groupdocs.signature.licensing.License;
 import com.groupdocs.signature.options.OutputType;
 import com.groupdocs.signature.options.SignatureOptionsCollection;
+import com.groupdocs.signature.options.digitalsignature.SignDigitalOptions;
 import com.groupdocs.signature.options.loadoptions.LoadOptions;
 import com.groupdocs.signature.options.saveoptions.SaveOptions;
 import com.groupdocs.ui.config.GlobalConfiguration;
@@ -48,6 +49,9 @@ import java.util.*;
 import java.util.List;
 
 import static com.groupdocs.ui.signature.PathConstants.*;
+import static com.groupdocs.ui.signature.SignatureType.*;
+import static com.groupdocs.ui.signature.SignatureType.DIGITAL;
+import static com.groupdocs.ui.signature.SignatureType.TEXT;
 import static com.groupdocs.ui.signature.model.SignatureDirectory.*;
 import static com.groupdocs.ui.util.Utils.getFreeFileName;
 import static com.groupdocs.ui.util.Utils.uploadFile;
@@ -152,17 +156,17 @@ public class SignatureServiceImpl implements SignatureService {
             }
             List<SignatureFileDescriptionEntity> fileList;
             switch (signatureType) {
-                case "digital":
+                case DIGITAL:
                     fileList = signatureLoader.loadFiles(relDirPath, signatureConfiguration.getDataDirectory());
                     break;
-                case "image":
-                case "hand":
+                case IMAGE:
+                case HAND:
                     fileList = signatureLoader.loadImageSignatures(relDirPath, signatureConfiguration.getDataDirectory());
                     break;
-                case "stamp":
-                case "text":
-                case "qrCode":
-                case "barCode":
+                case STAMP:
+                case TEXT:
+                case QR_CODE:
+                case BAR_CODE:
                     fileList = signatureLoader.loadStampSignatures(relDirPath, signatureConfiguration.getDataDirectory(), signatureType);
                     break;
                 default:
@@ -241,20 +245,10 @@ public class SignatureServiceImpl implements SignatureService {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public SignedDocumentEntity signDigital(SignDocumentRequest signDocumentRequest) {
+    public SignedDocumentEntity signDigital(String documentGuid, String password, SignatureDataEntity signatureDataEntity, String documentType) {
         try {
-            // get/set parameters
-            String documentGuid = signDocumentRequest.getGuid();
-            String password = signDocumentRequest.getPassword();
-            List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-            if (signaturesData == null || signaturesData.isEmpty()) {
-                throw new IllegalArgumentException("Sign data is empty");
-            }
             // get signed document name
-            String signedFileName = new File(documentGuid).getName();
-            // initiate signed document response
-            SignedDocumentEntity signedDocument = new SignedDocumentEntity();
+            String signedFileName = FilenameUtils.getName(documentGuid);
 
             final SaveOptions saveOptions = new SaveOptions();
             saveOptions.setOutputType(OutputType.String);
@@ -265,206 +259,35 @@ public class SignatureServiceImpl implements SignatureService {
                 loadOptions.setPassword(password);
             }
             // initiate digital signer
-            DigitalSigner signer = new DigitalSigner(signaturesData.get(0), password);
+            DigitalSigner signer = new DigitalSigner(signatureDataEntity, password);
             // prepare signing options and sign document
-            String documentType = signaturesData.get(0).getDocumentType();
+            SignDigitalOptions signOptions;
             switch (documentType) {
                 case "Portable Document Format":
                     // sign document
-                    signedDocument.setGuid(signatureHandler.sign(documentGuid, signer.signPdf(), loadOptions, saveOptions).toString());
+                    signOptions = signer.signPdf();
                     break;
                 case "Microsoft Word":
                     // sign document
-                    signedDocument.setGuid(signatureHandler.sign(documentGuid, signer.signWord(), loadOptions, saveOptions).toString());
+                    signOptions = signer.signWord();
                     break;
                 case "Microsoft Excel":
                     // sign document
-                    signedDocument.setGuid(signatureHandler.sign(documentGuid, signer.signCells(), loadOptions, saveOptions).toString());
+                    signOptions = signer.signCells();
                     break;
                 default:
                     throw new IllegalStateException(String.format("File format %s is not supported.", documentType));
+            }
+            // initiate signed document response
+            SignedDocumentEntity signedDocument = new SignedDocumentEntity();
+
+            if (signOptions != null) {
+                signedDocument.setGuid(signatureHandler.sign(documentGuid, signOptions, loadOptions, saveOptions).toString());
             }
             // return loaded page object
             return signedDocument;
         } catch (Exception ex) {
             logger.error("Exception occurred while signing by digital signature", ex);
-            throw new TotalGroupDocsException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SignedDocumentEntity signImage(SignDocumentRequest signDocumentRequest) {
-        try {
-            // get/set parameters
-            String documentGuid = signDocumentRequest.getGuid();
-            String password = signDocumentRequest.getPassword();
-            List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-            if (signaturesData == null || signaturesData.isEmpty()) {
-                throw new IllegalArgumentException("Sign data is empty");
-            }
-            SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
-            // set signature password if required
-            for (int i = 0; i < signaturesData.size(); i++) {
-                SignatureDataEntity signatureDataEntity = signaturesData.get(i);
-                if (signatureDataEntity.getDeleted()) {
-                    continue;
-                } else {
-                    // check if document type is image
-                    if (supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid))) {
-                        signatureDataEntity.setDocumentType("image");
-                    }
-                    // initiate image signer object
-                    ImageSigner signer = new ImageSigner(signatureDataEntity);
-                    // prepare signing options and sign document
-                    addSignOptions(signatureDataEntity.getDocumentType(), signsCollection, signer);
-                }
-            }
-            // return loaded page object
-            return signDocument(documentGuid, password, signsCollection);
-        } catch (Exception ex) {
-            logger.error("Exception occurred while signing by image signature", ex);
-            throw new TotalGroupDocsException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SignedDocumentEntity signStamp(SignDocumentRequest signDocumentRequest) {
-        String xmlPath = getFullDataPath(STAMP_DATA_DIRECTORY.getXMLPath());
-        try {
-            // get/set parameters
-            String documentGuid = signDocumentRequest.getGuid();
-            String password = signDocumentRequest.getPassword();
-            List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-            if (signaturesData == null || signaturesData.isEmpty()) {
-                throw new IllegalArgumentException("Sign data is empty");
-            }
-            SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
-            // mimeType should now be something like "image/png" if the document is image
-            if (supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid))) {
-                signaturesData.get(0).setDocumentType("image");
-            }
-
-            for (int i = 0; i < signaturesData.size(); i++) {
-                SignatureDataEntity signatureDataEntity = signaturesData.get(i);
-                if (signatureDataEntity.getDeleted()) {
-                    continue;
-                } else {
-                    String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
-                    // Load xml data
-                    String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
-                    StampXmlEntityList stampData;
-                    stampData = new XMLReaderWriter<StampXmlEntityList>().read(fileName, StampXmlEntityList.class);
-                    // since stamp ine are added stating from the most outer line we need to reverse the stamp data array
-                    List<StampXmlEntity> reverse = Lists.reverse(stampData.getStampXmlEntityList());
-                    // initiate stamp signer
-                    StampSigner signer = new StampSigner(reverse, signatureDataEntity);
-                    // prepare signing options and sign document
-                    addSignOptions(signatureDataEntity.getDocumentType(), signsCollection, signer);
-                }
-            }
-            // return loaded page object
-            return signDocument(documentGuid, password, signsCollection);
-        } catch (Exception ex) {
-            logger.error("Exception occurred while signing by stamp", ex);
-            throw new TotalGroupDocsException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SignedDocumentEntity signOptical(SignDocumentRequest signDocumentRequest) {
-        try {
-            // get/set parameters
-            String documentGuid = signDocumentRequest.getGuid();
-            String password = signDocumentRequest.getPassword();
-            List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-
-            if (signaturesData == null || signaturesData.isEmpty()) {
-                throw new IllegalArgumentException("Sign data is empty");
-            }
-
-            String signatureType = signaturesData.get(0).getSignatureType();
-
-            SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
-            // get xml files root path
-            String xmlPath = getFullDataPath((signatureType.equals("qrCode")) ?
-                    QRCODE_DATA_DIRECTORY.getXMLPath() :
-                    BARCODE_DATA_DIRECTORY.getXMLPath());
-            // prepare signing options and sign document
-            for (int i = 0; i < signaturesData.size(); i++) {
-                SignatureDataEntity signatureDataEntity = signaturesData.get(i);
-                if (!signatureDataEntity.getDeleted()) {
-                    // get xml data of the QR-Code
-                    String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
-                    // Load xml data
-                    String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
-                    OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
-                    // check if document type is image
-                    if (supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid))) {
-                        signatureDataEntity.setDocumentType("image");
-                    }
-                    // initiate QRCode signer object
-                    Signer signer = (signatureType.equals("qrCode")) ? new QrCodeSigner(opticalCodeData, signatureDataEntity) : new BarCodeSigner(opticalCodeData, signatureDataEntity);
-                    // prepare signing options and sign document
-                    addSignOptions(signatureDataEntity.getDocumentType(), signsCollection, signer);
-                }
-            }
-            // return loaded page object
-            return signDocument(documentGuid, password, signsCollection);
-        } catch (Exception ex) {
-            logger.error("Exception occurred while signing by optical code", ex);
-            throw new TotalGroupDocsException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SignedDocumentEntity signText(SignDocumentRequest signDocumentRequest) {
-        String xmlPath = getFullDataPath(TEXT_DATA_DIRECTORY.getXMLPath());
-        try {
-            // get/set parameters
-            String documentGuid = signDocumentRequest.getGuid();
-            String password = signDocumentRequest.getPassword();
-            List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-
-            if (signaturesData == null || signaturesData.isEmpty()) {
-                throw new IllegalArgumentException("Sign data is empty");
-            }
-
-            SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
-            // prepare signing options and sign document
-            for (int i = 0; i < signaturesData.size(); i++) {
-                SignatureDataEntity signatureDataEntity = signaturesData.get(i);
-                if (!signatureDataEntity.getDeleted()) {
-                    // get xml data of the Text signature
-                    String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
-                    // Load xml data
-                    String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
-                    TextXmlEntity textData = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
-                    // check if document type is image
-                    if (supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid))) {
-                        signatureDataEntity.setDocumentType("image");
-                    }
-                    // initiate QRCode signer object
-                    TextSigner signer = new TextSigner(textData, signatureDataEntity);
-                    // prepare signing options and sign document
-                    addSignOptions(signatureDataEntity.getDocumentType(), signsCollection, signer);
-                }
-            }
-            // return loaded page object
-            return signDocument(documentGuid, password, signsCollection);
-        } catch (Exception ex) {
-            logger.error("Exception occurred while signing by text signature", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
     }
@@ -701,7 +524,7 @@ public class SignatureServiceImpl implements SignatureService {
         // create response data
         SignatureFileDescriptionEntity uploadedDocument = new SignatureFileDescriptionEntity();
         uploadedDocument.setGuid(filePath);
-        if ("image".equals(signatureType)) {
+        if (IMAGE.equals(signatureType)) {
             // get page image
             try {
                 byte[] bytes = Files.readAllBytes(new File(uploadedDocument.getGuid()).toPath());
@@ -740,6 +563,140 @@ public class SignatureServiceImpl implements SignatureService {
     @Override
     public LoadedPageEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest) {
         return signatureLoader.loadImage(loadSignatureImageRequest);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SignedDocumentEntity signImage(String documentGuid, String password, String documentType, List<SignatureDataEntity> images) {
+        try {
+            SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
+            boolean isImage = supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid));
+            // set signature password if required
+            for (int i = 0; i < images.size(); i++) {
+                SignatureDataEntity signatureDataEntity = images.get(i);
+                if (signatureDataEntity.getDeleted()) {
+                    continue;
+                } else {
+                    // initiate image signer object
+                    ImageSigner signer = new ImageSigner(signatureDataEntity);
+                    // prepare signing options and sign document
+                    addSignOptions(isImage ? "image" : documentType, signsCollection, signer);
+                }
+            }
+            // return loaded page object
+            return signDocument(documentGuid, password, signsCollection);
+        } catch (Exception ex) {
+            logger.error("Exception occurred while signing by image signature", ex);
+            throw new TotalGroupDocsException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SignedDocumentEntity signStamp(String documentGuid, String password, String documentType, List<SignatureDataEntity> stamps) {
+        String xmlPath = getFullDataPath(STAMP_DATA_DIRECTORY.getXMLPath());
+        try {
+            SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
+            // mimeType should now be something like "image/png" if the document is image
+            boolean isImage = supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid));
+
+            for (int i = 0; i < stamps.size(); i++) {
+                SignatureDataEntity signatureDataEntity = stamps.get(i);
+                if (signatureDataEntity.getDeleted()) {
+                    continue;
+                } else {
+                    String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
+                    // Load xml data
+                    String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
+                    StampXmlEntityList stampData;
+                    stampData = new XMLReaderWriter<StampXmlEntityList>().read(fileName, StampXmlEntityList.class);
+                    // since stamp ine are added stating from the most outer line we need to reverse the stamp data array
+                    List<StampXmlEntity> reverse = Lists.reverse(stampData.getStampXmlEntityList());
+                    // initiate stamp signer
+                    StampSigner signer = new StampSigner(reverse, signatureDataEntity);
+                    // prepare signing options and sign document
+                    addSignOptions(isImage ? "image" : documentType, signsCollection, signer);
+                }
+            }
+            // return loaded page object
+            return signDocument(documentGuid, password, signsCollection);
+        } catch (Exception ex) {
+            logger.error("Exception occurred while signing by stamp", ex);
+            throw new TotalGroupDocsException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SignedDocumentEntity signOptical(String documentGuid, String password, String documentType, List<SignatureDataEntity> codes) {
+        try {
+            SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
+            // mimeType should now be something like "image/png" if the document is image
+            boolean isImage = supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid));
+            // prepare signing options and sign document
+            for (int i = 0; i < codes.size(); i++) {
+                SignatureDataEntity signatureDataEntity = codes.get(i);
+                // get xml files root path
+                if (!signatureDataEntity.getDeleted()) {
+                    String signatureType = signatureDataEntity.getSignatureType();
+                    String xmlPath = getFullDataPath((signatureType.equals("qrCode")) ?
+                            QRCODE_DATA_DIRECTORY.getXMLPath() :
+                            BARCODE_DATA_DIRECTORY.getXMLPath());
+                    // get xml data of the QR-Code
+                    String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
+                    // Load xml data
+                    String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
+                    OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
+                    // initiate QRCode signer object
+                    Signer signer = (signatureType.equals("qrCode")) ? new QrCodeSigner(opticalCodeData, signatureDataEntity) : new BarCodeSigner(opticalCodeData, signatureDataEntity);
+                    // prepare signing options and sign document
+                    addSignOptions(isImage ? "image" : documentType, signsCollection, signer);
+                }
+            }
+            // return loaded page object
+            return signDocument(documentGuid, password, signsCollection);
+        } catch (Exception ex) {
+            logger.error("Exception occurred while signing by optical code", ex);
+            throw new TotalGroupDocsException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SignedDocumentEntity signText(String documentGuid, String password, String documentType, List<SignatureDataEntity> texts) {
+        String xmlPath = getFullDataPath(TEXT_DATA_DIRECTORY.getXMLPath());
+        try {
+            SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
+            boolean isImage = supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid));
+            // prepare signing options and sign document
+            for (int i = 0; i < texts.size(); i++) {
+                SignatureDataEntity signatureDataEntity = texts.get(i);
+                if (!signatureDataEntity.getDeleted()) {
+                    // get xml data of the Text signature
+                    String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
+                    // Load xml data
+                    String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
+                    TextXmlEntity textData = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
+                    // initiate QRCode signer object
+                    TextSigner signer = new TextSigner(textData, signatureDataEntity);
+                    // prepare signing options and sign document
+                    addSignOptions(isImage ? "image" : documentType, signsCollection, signer);
+                }
+            }
+            // return loaded page object
+            return signDocument(documentGuid, password, signsCollection);
+        } catch (Exception ex) {
+            logger.error("Exception occurred while signing by text signature", ex);
+            throw new TotalGroupDocsException(ex.getMessage(), ex);
+        }
     }
 
     /**

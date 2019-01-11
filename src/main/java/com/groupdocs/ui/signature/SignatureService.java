@@ -6,6 +6,7 @@ import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadDocumentEntity;
 import com.groupdocs.ui.model.response.LoadedPageEntity;
 import com.groupdocs.ui.signature.model.request.*;
+import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
@@ -53,42 +54,13 @@ public interface SignatureService {
     /**
      * Sign document by digital signature
      *
-     * @param signDocumentRequest sign document request data
+     * @param documentGuid
+     * @param password
+     * @param signatureDataEntity
+     * @param documentType
      * @return
      */
-    SignedDocumentEntity signDigital(SignDocumentRequest signDocumentRequest);
-
-    /**
-     * Sign document by image signature
-     *
-     * @param signDocumentRequest sign document request data
-     * @return
-     */
-    SignedDocumentEntity signImage(SignDocumentRequest signDocumentRequest);
-
-    /**
-     * Sign document by stamp
-     *
-     * @param signDocumentRequest sign document request data
-     * @return signed document
-     */
-    SignedDocumentEntity signStamp(SignDocumentRequest signDocumentRequest);
-
-    /**
-     * Sign document by code
-     *
-     * @param signDocumentRequest sign document request data
-     * @return signed document
-     */
-    SignedDocumentEntity signOptical(SignDocumentRequest signDocumentRequest);
-
-    /**
-     * Sign document by text signature
-     *
-     * @param signDocumentRequest sign document request data
-     * @return signed document
-     */
-    SignedDocumentEntity signText(SignDocumentRequest signDocumentRequest);
+    SignedDocumentEntity signDigital(String documentGuid, String password, SignatureDataEntity signatureDataEntity, String documentType);
 
     /**
      * Save stamp signature
@@ -146,4 +118,48 @@ public interface SignatureService {
     List<String> getFonts();
 
     LoadedPageEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest);
+
+    /**
+     * Sign document with images
+     *
+     * @param documentGuid
+     * @param password
+     * @param documentType
+     * @param images
+     * @return
+     */
+    SignedDocumentEntity signImage(String documentGuid, String password, String documentType, List<SignatureDataEntity> images);
+
+    /**
+     * Sign document with images
+     *
+     * @param documentGuid
+     * @param password
+     * @param documentType
+     * @param stamps
+     * @return
+     */
+    SignedDocumentEntity signStamp(String documentGuid, String password, String documentType, List<SignatureDataEntity> stamps);
+
+    /**
+     * Sign document with barcodes and/or qrcodes
+     *
+     * @param documentGuid
+     * @param password
+     * @param documentType
+     * @param codes
+     * @return
+     */
+    SignedDocumentEntity signOptical(String documentGuid, String password, String documentType, List<SignatureDataEntity> codes);
+
+    /**
+     * Sign document with text signature
+     *
+     * @param documentGuid
+     * @param password
+     * @param documentType
+     * @param texts
+     * @return
+     */
+    SignedDocumentEntity signText(String documentGuid, String password, String documentType, List<SignatureDataEntity> texts);
 }
