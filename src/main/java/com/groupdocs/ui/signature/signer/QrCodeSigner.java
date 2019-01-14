@@ -33,26 +33,8 @@ public class QrCodeSigner extends Signer{
     public PdfQRCodeSignOptions signPdf(){
         // setup options
         PdfQRCodeSignOptions signOptions = new PdfQRCodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(QRCodeTypes.QR);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
-        signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
+        fillProperties(signOptions);
         return signOptions;
-    }
-
-    private void fillBorders(QRCodeSignOptions signOptions) {
-        if(qrCodeData.getBorderWidth() != 0){
-            signOptions.setBorderVisiblity(true);
-            signOptions.setBorderColor(getColor(qrCodeData.getBorderColor()));
-            signOptions.setBorderWeight(qrCodeData.getBorderWidth());
-            signOptions.setBorderDashStyle(qrCodeData.getBorderStyle());
-        }
     }
 
     /**
@@ -63,17 +45,10 @@ public class QrCodeSigner extends Signer{
     public ImagesQRCodeSignOptions signImage(){
         // setup options
         ImagesQRCodeSignOptions signOptions = new ImagesQRCodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(QRCodeTypes.QR);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
+        fillProperties(signOptions);
         if(signatureData.getAngle() != 0) {
             signOptions.setRotationAngle(signatureData.getAngle());
         }
-        fillBorders(signOptions);
         return signOptions;
     }
 
@@ -85,16 +60,7 @@ public class QrCodeSigner extends Signer{
     public WordsQRCodeSignOptions signWord(){
         // setup options
         WordsQRCodeSignOptions signOptions = new WordsQRCodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(QRCodeTypes.QR);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
-        signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
+        fillProperties(signOptions);
         return signOptions;
     }
 
@@ -106,16 +72,7 @@ public class QrCodeSigner extends Signer{
     public CellsQRCodeSignOptions signCells(){
         // setup options
         CellsQRCodeSignOptions signOptions = new CellsQRCodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(QRCodeTypes.QR);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
-        signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
+        fillProperties(signOptions);
         return signOptions;
     }
 
@@ -127,6 +84,11 @@ public class QrCodeSigner extends Signer{
     public SlidesQRCodeSignOptions signSlides(){
         // setup options
         SlidesQRCodeSignOptions signOptions = new SlidesQRCodeSignOptions(qrCodeData.getText());
+        fillProperties(signOptions);
+        return signOptions;
+    }
+
+    private void fillProperties(QRCodeSignOptions signOptions) {
         signOptions.setEncodeType(QRCodeTypes.QR);
         signOptions.setHorizontalAlignment(HorizontalAlignment.None);
         signOptions.setVerticalAlignment(VerticalAlignment.None);
@@ -136,8 +98,6 @@ public class QrCodeSigner extends Signer{
         signOptions.setLeft(signatureData.getLeft());
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
         signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
-        return signOptions;
     }
 
 }

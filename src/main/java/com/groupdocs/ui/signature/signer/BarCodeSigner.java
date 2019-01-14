@@ -33,16 +33,9 @@ public class BarCodeSigner extends Signer{
     public PdfBarcodeSignOptions signPdf(){
         // setup options
         PdfBarcodeSignOptions signOptions = new PdfBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
+        fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
         signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
         return signOptions;
     }
 
@@ -54,6 +47,14 @@ public class BarCodeSigner extends Signer{
     public ImagesBarcodeSignOptions signImage(){
         // setup options
         ImagesBarcodeSignOptions signOptions = new ImagesBarcodeSignOptions(qrCodeData.getText());
+        fillProperties(signOptions);
+        if(signatureData.getAngle() != 0) {
+            signOptions.setRotationAngle(signatureData.getAngle());
+        }
+        return signOptions;
+    }
+
+    private void fillProperties(BarcodeSignOptions signOptions) {
         signOptions.setEncodeType(BarcodeTypes.Code39Standard);
         signOptions.setHorizontalAlignment(HorizontalAlignment.None);
         signOptions.setVerticalAlignment(VerticalAlignment.None);
@@ -61,11 +62,6 @@ public class BarCodeSigner extends Signer{
         signOptions.setHeight(signatureData.getImageHeight());
         signOptions.setTop(signatureData.getTop());
         signOptions.setLeft(signatureData.getLeft());
-        if(signatureData.getAngle() != 0) {
-            signOptions.setRotationAngle(signatureData.getAngle());
-        }
-        fillBorders(signOptions);
-        return signOptions;
     }
 
     /**
@@ -76,16 +72,9 @@ public class BarCodeSigner extends Signer{
     public WordsBarcodeSignOptions signWord(){
         // setup options
         WordsBarcodeSignOptions signOptions = new WordsBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
+        fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
         signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
         return signOptions;
     }
 
@@ -97,16 +86,9 @@ public class BarCodeSigner extends Signer{
     public CellsBarcodeSignOptions signCells(){
         // setup options
         CellsBarcodeSignOptions signOptions = new CellsBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
+        fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
         signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
         return signOptions;
     }
 
@@ -118,25 +100,10 @@ public class BarCodeSigner extends Signer{
     public SlidesBarcodeSignOptions signSlides(){
         // setup options
         SlidesBarcodeSignOptions signOptions = new SlidesBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
+        fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
         signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
         return signOptions;
     }
 
-    private void fillBorders(BarcodeSignOptions signOptions) {
-        if(qrCodeData.getBorderWidth() != 0){
-            signOptions.setBorderVisiblity(true);
-            signOptions.setBorderColor(getColor(qrCodeData.getBorderColor()));
-            signOptions.setBorderWeight(qrCodeData.getBorderWidth());
-            signOptions.setBorderDashStyle(qrCodeData.getBorderStyle());
-        }
-    }
 }

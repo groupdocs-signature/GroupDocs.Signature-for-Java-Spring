@@ -10,6 +10,7 @@ public abstract class XmlEntity {
     private String text;
     private int width;
     private int height;
+    private String encodedImage;
 
     public String getImageGuid() {
         return imageGuid;
@@ -41,5 +42,13 @@ public abstract class XmlEntity {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public void setEncodedImage(String encodedImage) {
+        this.encodedImage = encodedImage;
+    }
+
+    public String getEncodedImage() {
+        return encodedImage;
     }
 }
