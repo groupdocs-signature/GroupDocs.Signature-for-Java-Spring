@@ -22,9 +22,12 @@ public class SortedSignaturesData {
         this.signaturesData = signaturesData;
     }
 
-    public SortedSignaturesData sort() {
+    public SortedSignaturesData sort(boolean removeDeleted) {
         for (int i = 0; i < signaturesData.size(); i++) {
             SignatureDataEntity signatureDataEntity = signaturesData.get(i);
+            if (removeDeleted && signatureDataEntity.getDeleted()) {
+                continue;
+            }
             switch (signatureDataEntity.getSignatureType()) {
                 case TEXT:
                     texts.add(signatureDataEntity);

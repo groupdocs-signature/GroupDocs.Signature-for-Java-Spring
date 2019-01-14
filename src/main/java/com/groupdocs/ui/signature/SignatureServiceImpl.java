@@ -7,7 +7,6 @@ import com.groupdocs.signature.handler.SignatureHandler;
 import com.groupdocs.signature.licensing.License;
 import com.groupdocs.signature.options.OutputType;
 import com.groupdocs.signature.options.SignatureOptionsCollection;
-import com.groupdocs.signature.options.digitalsignature.SignDigitalOptions;
 import com.groupdocs.signature.options.loadoptions.LoadOptions;
 import com.groupdocs.signature.options.saveoptions.SaveOptions;
 import com.groupdocs.ui.config.GlobalConfiguration;
@@ -445,26 +444,20 @@ public class SignatureServiceImpl implements SignatureService {
         try {
             for (int i = 0; i < digital.size(); i++) {
                 SignatureDataEntity signatureDataEntity = digital.get(i);
-                if (signatureDataEntity.getDeleted()) {
-                    continue;
-                } else {
-                    // initiate digital signer
-                    DigitalSigner signer = new DigitalSigner(signatureDataEntity, password);
-                    // prepare signing options and sign document
-                    SignDigitalOptions signOptions;
-                    switch (documentType) {
-                        case "Portable Document Format":
-                            signsCollection.add(signer.signPdf());
-                            break;
-                        case "Microsoft Word":
-                            signsCollection.add(signer.signWord());
-                            break;
-                        case "Microsoft Excel":
-                            signsCollection.add(signer.signCells());
-                            break;
-                        default:
-                            throw new IllegalStateException(String.format("File format %s is not supported.", documentType));
-                    }
+                // initiate digital signer
+                DigitalSigner signer = new DigitalSigner(signatureDataEntity, password);
+                switch (documentType) {
+                    case "Portable Document Format":
+                        signsCollection.add(signer.signPdf());
+                        break;
+                    case "Microsoft Word":
+                        signsCollection.add(signer.signWord());
+                        break;
+                    case "Microsoft Excel":
+                        signsCollection.add(signer.signCells());
+                        break;
+                    default:
+                        throw new IllegalStateException(String.format("File format %s is not supported.", documentType));
                 }
             }
         } catch (Exception ex) {
@@ -485,14 +478,10 @@ public class SignatureServiceImpl implements SignatureService {
         try {
             for (int i = 0; i < images.size(); i++) {
                 SignatureDataEntity signatureDataEntity = images.get(i);
-                if (signatureDataEntity.getDeleted()) {
-                    continue;
-                } else {
-                    // initiate image signer object
-                    ImageSigner signer = new ImageSigner(signatureDataEntity);
-                    // prepare signing options and sign document
-                    addSignOptions(documentType, signsCollection, signer);
-                }
+                // initiate image signer object
+                ImageSigner signer = new ImageSigner(signatureDataEntity);
+                // prepare signing options and sign document
+                addSignOptions(documentType, signsCollection, signer);
             }
         } catch (Exception ex) {
             logger.error("Exception occurred while signing by image signature", ex);
@@ -513,25 +502,26 @@ public class SignatureServiceImpl implements SignatureService {
         try {
             for (int i = 0; i < stamps.size(); i++) {
                 SignatureDataEntity signatureDataEntity = stamps.get(i);
-                if (signatureDataEntity.getDeleted()) {
-                    continue;
-                } else {
-                    String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
-                    // Load xml data
-                    String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
-                    StampXmlEntityList stampData = new XMLReaderWriter<StampXmlEntityList>().read(fileName, StampXmlEntityList.class);
-                    // since stamp ine are added stating from the most outer line we need to reverse the stamp data array
-                    List<StampXmlEntity> reverse = Lists.reverse(stampData.getStampXmlEntityList());
-                    // initiate stamp signer
-                    StampSigner signer = new StampSigner(reverse, signatureDataEntity);
-                    // prepare signing options and sign document
-                    addSignOptions(documentType, signsCollection, signer);
-                }
+                String fileName = getXMLFileName(xmlPath, signatureDataEntity.getSignatureGuid());
+                StampXmlEntityList stampData = new XMLReaderWriter<StampXmlEntityList>().read(fileName, StampXmlEntityList.class);
+                // since stamp ine are added stating from the most outer line we need to reverse the stamp data array
+                List<StampXmlEntity> reverse = Lists.reverse(stampData.getStampXmlEntityList());
+                // initiate stamp signer
+                StampSigner signer = new StampSigner(reverse, signatureDataEntity);
+                // prepare signing options and sign document
+                addSignOptions(documentType, signsCollection, signer);
             }
         } catch (Exception ex) {
             logger.error("Exception occurred while signing by stamp", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
+    }
+
+    private String getXMLFileName(String xmlPath, String signatureGuid) {
+        // get xml data of the signature
+        String xmlFileName = FilenameUtils.removeExtension(new File(signatureGuid).getName());
+        // Load xml data
+        return String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
     }
 
     /**
@@ -548,21 +538,17 @@ public class SignatureServiceImpl implements SignatureService {
             for (int i = 0; i < codes.size(); i++) {
                 SignatureDataEntity signatureDataEntity = codes.get(i);
                 // get xml files root path
-                if (!signatureDataEntity.getDeleted()) {
-                    String signatureType = signatureDataEntity.getSignatureType();
-                    String xmlPath = getFullDataPath((QR_CODE.equals(signatureType)) ?
-                            QRCODE_DATA_DIRECTORY.getXMLPath() :
-                            BARCODE_DATA_DIRECTORY.getXMLPath());
-                    // get xml data of the QR-Code
-                    String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
-                    // Load xml data
-                    String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
-                    OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
-                    // initiate QRCode signer object
-                    Signer signer = (QR_CODE.equals(signatureType)) ? new QrCodeSigner(opticalCodeData, signatureDataEntity) : new BarCodeSigner(opticalCodeData, signatureDataEntity);
-                    // prepare signing options and sign document
-                    addSignOptions(documentType, signsCollection, signer);
-                }
+                String signatureType = signatureDataEntity.getSignatureType();
+                String xmlPath = getFullDataPath((QR_CODE.equals(signatureType)) ?
+                        QRCODE_DATA_DIRECTORY.getXMLPath() :
+                        BARCODE_DATA_DIRECTORY.getXMLPath());
+                // get xml data of the QR-Code
+                String fileName = getXMLFileName(xmlPath, signatureDataEntity.getSignatureGuid());
+                OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
+                // initiate QRCode signer object
+                Signer signer = (QR_CODE.equals(signatureType)) ? new QrCodeSigner(opticalCodeData, signatureDataEntity) : new BarCodeSigner(opticalCodeData, signatureDataEntity);
+                // prepare signing options and sign document
+                addSignOptions(documentType, signsCollection, signer);
             }
         } catch (Exception ex) {
             logger.error("Exception occurred while signing by optical code", ex);
@@ -584,17 +570,13 @@ public class SignatureServiceImpl implements SignatureService {
             // prepare signing options and sign document
             for (int i = 0; i < texts.size(); i++) {
                 SignatureDataEntity signatureDataEntity = texts.get(i);
-                if (!signatureDataEntity.getDeleted()) {
-                    // get xml data of the Text signature
-                    String xmlFileName = FilenameUtils.removeExtension(new File(signatureDataEntity.getSignatureGuid()).getName());
-                    // Load xml data
-                    String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
-                    TextXmlEntity textData = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
-                    // initiate QRCode signer object
-                    TextSigner signer = new TextSigner(textData, signatureDataEntity);
-                    // prepare signing options and sign document
-                    addSignOptions(documentType, signsCollection, signer);
-                }
+                // get xml data of the signature
+                String fileName = getXMLFileName(xmlPath, signatureDataEntity.getSignatureGuid());
+                TextXmlEntity textData = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
+                // initiate QRCode signer object
+                TextSigner signer = new TextSigner(textData, signatureDataEntity);
+                // prepare signing options and sign document
+                addSignOptions(documentType, signsCollection, signer);
             }
         } catch (Exception ex) {
             logger.error("Exception occurred while signing by text signature", ex);
@@ -607,7 +589,7 @@ public class SignatureServiceImpl implements SignatureService {
         String documentGuid = signDocumentRequest.getGuid();
         String documentType = getDocumentType(signDocumentRequest.getDocumentType(), documentGuid, FilenameUtils.getExtension(documentGuid));
         List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-        SortedSignaturesData sortedSignaturesData = new SortedSignaturesData(signaturesData).sort();
+        SortedSignaturesData sortedSignaturesData = new SortedSignaturesData(signaturesData).sort(true);
         SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
         if (!sortedSignaturesData.digital.isEmpty()) {
             signDigital(signDocumentRequest.getPassword(), sortedSignaturesData.digital, documentType, signsCollection);
