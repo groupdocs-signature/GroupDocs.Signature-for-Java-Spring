@@ -12,8 +12,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="TextXmlEntity", namespace="TextXmlEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TextXmlEntity extends XmlEntity {
-    private String encodedImage;
-
     private String backgroundColor = "rgb(255,255,255)";
     private String fontColor = "rgb(0,0,0)";
     private String font;
@@ -21,14 +19,6 @@ public class TextXmlEntity extends XmlEntity {
     private Boolean bold;
     private Boolean italic;
     private Boolean underline;
-
-    public String getEncodedImage() {
-        return encodedImage;
-    }
-
-    public void setEncodedImage(String encodedImage) {
-        this.encodedImage = encodedImage;
-    }
 
     public String getBackgroundColor() {
         return backgroundColor;
