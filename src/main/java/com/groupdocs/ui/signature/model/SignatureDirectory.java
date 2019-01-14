@@ -2,6 +2,7 @@ package com.groupdocs.ui.signature.model;
 
 import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
+import static com.groupdocs.ui.signature.SignatureType.*;
 
 public enum SignatureDirectory {
 
@@ -34,19 +35,19 @@ public enum SignatureDirectory {
 
     public static String getPathFromSignatureType(String signatureType) {
         switch (signatureType) {
-            case "digital":
+            case DIGITAL:
                 return CERTIFICATE_DATA_DIRECTORY.getPath();
-            case "image":
+            case IMAGE:
                 return IMAGE_UPLOADED_DATA_DIRECTORY.getPath();
-            case "hand":
+            case HAND:
                 return IMAGE_DATA_DIRECTORY.getPath();
-            case "stamp":
+            case STAMP:
                 return STAMP_DATA_DIRECTORY.getPath();
-            case "text":
+            case TEXT:
                 return TEXT_DATA_DIRECTORY.getPath();
-            case "qrCode":
+            case QR_CODE:
                 return QRCODE_DATA_DIRECTORY.getPath();
-            case "barCode":
+            case BAR_CODE:
                 return BARCODE_DATA_DIRECTORY.getPath();
             default:
                 return null;

@@ -23,6 +23,7 @@ import java.util.List;
 
 import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
+import static com.groupdocs.ui.signature.SignatureType.*;
 import static com.groupdocs.ui.util.Utils.*;
 
 /**
@@ -37,9 +38,9 @@ public class SignatureLoader {
     /**
      * Load image signatures
      *
-     * @return List<SignatureFileDescriptionEntity>
      * @param currentPath
      * @param dataPath
+     * @return List<SignatureFileDescriptionEntity>
      */
     public List<SignatureFileDescriptionEntity> loadImageSignatures(String currentPath, String dataPath) {
         File directory = new File(currentPath);
@@ -106,49 +107,49 @@ public class SignatureLoader {
         String xmlPath = currentPath + DATA_XML_FOLDER;
         File images = new File(imagesPath);
         List<SignatureFileDescriptionEntity> fileList = new ArrayList<>();
+        if (images.listFiles() == null) {
+            return fileList;
+        }
         try {
-            if(images.listFiles() != null) {
-                List<File> imageFiles = Arrays.asList(images.listFiles());
-                File xmls = new File(xmlPath);
-                List<File> xmlFiles = Arrays.asList(xmls.listFiles());
-                List<File> filesList = new ArrayList<>();
-                for (File image : imageFiles) {
-                    for (File xmlFile : xmlFiles) {
-                        if (FilenameUtils.removeExtension(xmlFile.getName()).equals(FilenameUtils.removeExtension(image.getName()))) {
-                            filesList.add(image);
-                        }
-                    }
-                }
-                // sort list of files and folders
-                filesList = Ordering.from(FILE_DATE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
-                Path path = new File(dataPath).toPath();
-                for (File file : filesList) {
-                    // check if current file/folder is hidden
-                    if (file.isHidden() || file.toPath().equals(path) || file.isDirectory()) {
-                        // ignore current file and skip to next one
-                        continue;
-                    } else {
-                        SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, true);
-                        String fileName = getXmlFilePath(file);
-                        if ("qrCode".equals(signatureType) || "barCode".equals(signatureType)) {
-                            OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
-                            fileDescription.setText(opticalCodeData.getText());
-                        }
-                        // add object to array list
-                        fileList.add(fileDescription);
+            List<File> imageFiles = Arrays.asList(images.listFiles());
+            List<File> xmlFiles = Arrays.asList(new File(xmlPath).listFiles());
+            List<File> filesList = new ArrayList<>();
+            for (File image : imageFiles) {
+                for (File xmlFile : xmlFiles) {
+                    if (FilenameUtils.removeExtension(xmlFile.getName()).equals(FilenameUtils.removeExtension(image.getName()))) {
+                        filesList.add(image);
                     }
                 }
             }
+            // sort list of files and folders
+            filesList = Ordering.from(FILE_DATE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
+            Path path = new File(dataPath).toPath();
+            for (File file : filesList) {
+                // check if current file/folder is hidden
+                if (file.isHidden() || file.toPath().equals(path) || file.isDirectory()) {
+                    // ignore current file and skip to next one
+                    continue;
+                } else {
+                    SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, true);
+                    String fileName = getXmlFilePath(file);
+                    if (QR_CODE.equals(signatureType) || BAR_CODE.equals(signatureType)) {
+                        OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
+                        fileDescription.setText(opticalCodeData.getText());
+                    }
+                    // add object to array list
+                    fileList.add(fileDescription);
+                }
+            }
             return fileList;
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
     }
 
     public void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest) {
         String signatureType = deleteSignatureFileRequest.getSignatureType();
-        if ("image".equals(signatureType) ||
-                "digital".equals(signatureType)) {
+        if (IMAGE.equals(signatureType) ||
+                DIGITAL.equals(signatureType)) {
             new File(deleteSignatureFileRequest.getGuid()).delete();
         } else {
             File file = new File(deleteSignatureFileRequest.getGuid());
@@ -165,7 +166,7 @@ public class SignatureLoader {
     /**
      * Create file description
      *
-     * @param file file
+     * @param file      file
      * @param withImage set image
      * @return signature file description
      * @throws IOException
@@ -197,14 +198,14 @@ public class SignatureLoader {
             // encode ByteArray into String
             String encodedImage = new String(Base64.getEncoder().encode(bytes));
             loadedPage.setPageImage(encodedImage);
-            if ("text".equals(loadSignatureImageRequest.getSignatureType())) {
+            if (TEXT.equals(loadSignatureImageRequest.getSignatureType())) {
                 String fileName = getXmlFilePath(file);
                 TextXmlEntity textXmlEntity = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
                 loadedPage.setProps(textXmlEntity);
             }
             // return loaded page object
             return loadedPage;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
     }
