@@ -28,28 +28,32 @@ public class SortedSignaturesData {
             if (removeDeleted && signatureDataEntity.getDeleted()) {
                 continue;
             }
-            switch (signatureDataEntity.getSignatureType()) {
-                case TEXT:
-                    texts.add(signatureDataEntity);
-                    break;
-                case DIGITAL:
-                    digital.add(signatureDataEntity);
-                    break;
-                case IMAGE:
-                case HAND:
-                    images.add(signatureDataEntity);
-                    break;
-                case STAMP:
-                    stamps.add(signatureDataEntity);
-                    break;
-                case QR_CODE:
-                case BAR_CODE:
-                    codes.add(signatureDataEntity);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Signature type is wrong");
-            }
+            addToList(signatureDataEntity);
         }
         return this;
+    }
+
+    private void addToList(SignatureDataEntity signatureDataEntity) {
+        switch (signatureDataEntity.getSignatureType()) {
+            case TEXT:
+                texts.add(signatureDataEntity);
+                break;
+            case DIGITAL:
+                digital.add(signatureDataEntity);
+                break;
+            case IMAGE:
+            case HAND:
+                images.add(signatureDataEntity);
+                break;
+            case STAMP:
+                stamps.add(signatureDataEntity);
+                break;
+            case QR_CODE:
+            case BAR_CODE:
+                codes.add(signatureDataEntity);
+                break;
+            default:
+                throw new IllegalArgumentException("Signature type is wrong");
+        }
     }
 }
