@@ -11,6 +11,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name="OpticalXmlEntity", namespace="OpticalXmlEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OpticalXmlEntity extends XmlEntity {
+public class OpticalXmlEntity extends XmlEntityWithImage {
 
 }

@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name="TextXmlEntity", namespace="TextXmlEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TextXmlEntity extends XmlEntity {
+public class TextXmlEntity extends XmlEntityWithImage {
     private String backgroundColor = "rgb(255,255,255)";
     private String fontColor = "rgb(0,0,0)";
     private String font;

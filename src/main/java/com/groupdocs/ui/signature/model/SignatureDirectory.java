@@ -2,12 +2,14 @@ package com.groupdocs.ui.signature.model;
 
 import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
+import static com.groupdocs.ui.signature.SignatureType.*;
 
 public enum SignatureDirectory {
 
     BARCODE_DATA_DIRECTORY("/BarCodes"),
     CERTIFICATE_DATA_DIRECTORY("/Certificates"),
     IMAGE_DATA_DIRECTORY("/Image"),
+    IMAGE_UPLOADED_DATA_DIRECTORY("/Image/Uploaded"),
     QRCODE_DATA_DIRECTORY("/ArCodes"),
     STAMP_DATA_DIRECTORY("/Stamps"),
     TEXT_DATA_DIRECTORY("/Text");
@@ -33,11 +35,22 @@ public enum SignatureDirectory {
 
     public static String getPathFromSignatureType(String signatureType) {
         switch (signatureType) {
-            case "digital":  return CERTIFICATE_DATA_DIRECTORY.getPath();
-            case "image": return IMAGE_DATA_DIRECTORY.getPath();
-            case "stamp": return STAMP_DATA_DIRECTORY.getPath();
-            case "text": return TEXT_DATA_DIRECTORY.getPath();
-            default:  return null;
+            case DIGITAL:
+                return CERTIFICATE_DATA_DIRECTORY.getPath();
+            case IMAGE:
+                return IMAGE_UPLOADED_DATA_DIRECTORY.getPath();
+            case HAND:
+                return IMAGE_DATA_DIRECTORY.getPath();
+            case STAMP:
+                return STAMP_DATA_DIRECTORY.getPath();
+            case TEXT:
+                return TEXT_DATA_DIRECTORY.getPath();
+            case QR_CODE:
+                return QRCODE_DATA_DIRECTORY.getPath();
+            case BAR_CODE:
+                return BARCODE_DATA_DIRECTORY.getPath();
+            default:
+                return null;
         }
     }
 }

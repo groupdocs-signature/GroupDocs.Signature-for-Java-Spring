@@ -6,7 +6,6 @@ import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadDocumentEntity;
 import com.groupdocs.ui.model.response.PageDescriptionEntity;
 import com.groupdocs.ui.signature.model.request.*;
-import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignaturePageEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
@@ -51,17 +50,6 @@ public interface SignatureService {
      * @return loaded document page
      */
     PageDescriptionEntity loadDocumentPage(LoadDocumentPageRequest loadDocumentPageRequest);
-
-    /**
-     * Sign document by digital signature
-     *
-     * @param documentGuid
-     * @param password
-     * @param signatureDataEntity
-     * @param documentType
-     * @return
-     */
-    SignedDocumentEntity signDigital(String documentGuid, String password, SignatureDataEntity signatureDataEntity, String documentType);
 
     /**
      * Save stamp signature
@@ -121,46 +109,10 @@ public interface SignatureService {
     SignaturePageEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest);
 
     /**
-     * Sign document with images
+     * Sign document
      *
-     * @param documentGuid
-     * @param password
-     * @param documentType
-     * @param images
+     * @param signDocumentRequest
      * @return
      */
-    SignedDocumentEntity signImage(String documentGuid, String password, String documentType, List<SignatureDataEntity> images);
-
-    /**
-     * Sign document with images
-     *
-     * @param documentGuid
-     * @param password
-     * @param documentType
-     * @param stamps
-     * @return
-     */
-    SignedDocumentEntity signStamp(String documentGuid, String password, String documentType, List<SignatureDataEntity> stamps);
-
-    /**
-     * Sign document with barcodes and/or qrcodes
-     *
-     * @param documentGuid
-     * @param password
-     * @param documentType
-     * @param codes
-     * @return
-     */
-    SignedDocumentEntity signOptical(String documentGuid, String password, String documentType, List<SignatureDataEntity> codes);
-
-    /**
-     * Sign document with text signature
-     *
-     * @param documentGuid
-     * @param password
-     * @param documentType
-     * @param texts
-     * @return
-     */
-    SignedDocumentEntity signText(String documentGuid, String password, String documentType, List<SignatureDataEntity> texts);
+    SignedDocumentEntity sign(SignDocumentRequest signDocumentRequest);
 }

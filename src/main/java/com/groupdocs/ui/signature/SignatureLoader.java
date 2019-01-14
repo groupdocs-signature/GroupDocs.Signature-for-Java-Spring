@@ -2,7 +2,6 @@ package com.groupdocs.ui.signature;
 
 import com.google.common.collect.Ordering;
 import com.groupdocs.ui.exception.TotalGroupDocsException;
-import com.groupdocs.ui.model.response.PageDescriptionEntity;
 import com.groupdocs.ui.signature.model.request.DeleteSignatureFileRequest;
 import com.groupdocs.ui.signature.model.request.LoadSignatureImageRequest;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
@@ -22,6 +21,7 @@ import java.util.*;
 
 import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
+import static com.groupdocs.ui.signature.SignatureType.*;
 import static com.groupdocs.ui.util.Utils.*;
 
 /**
@@ -93,8 +93,7 @@ public class SignatureLoader {
         try {
             if (images.listFiles() != null) {
                 List<File> imageFiles = Arrays.asList(images.listFiles());
-                File xmls = new File(xmlPath);
-                List<File> xmlFiles = Arrays.asList(xmls.listFiles());
+                List<File> xmlFiles = Arrays.asList(new File(xmlPath).listFiles());
                 List<File> filesList = new ArrayList<>();
                 for (File image : imageFiles) {
                     for (File xmlFile : xmlFiles) {
@@ -114,13 +113,13 @@ public class SignatureLoader {
     private List<SignatureFileDescriptionEntity> getResultFileList(String dataPath, List<File> filesList, boolean withImage, String signatureType) throws IOException, JAXBException {
         List<SignatureFileDescriptionEntity> fileList = new ArrayList<>();
         // sort list of files and folders
-        filesList = Ordering.from(FILE_TYPE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
+        filesList = Ordering.from(FILE_DATE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
         Path path = new File(dataPath).toPath();
         for (File file : filesList) {
             // check if current file/folder is hidden
             if (checkFile(path, file)) {
                 SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, withImage);
-                if ("qrCode".equals(signatureType) || "barCode".equals(signatureType)) {
+                if (QR_CODE.equals(signatureType) || BAR_CODE.equals(signatureType)) {
                     String fileName = file.getAbsolutePath().replace(DATA_PREVIEW_FOLDER, DATA_XML_FOLDER).replace(FilenameUtils.getExtension(file.getName()), "xml");
                     OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
                     fileDescription.setText(opticalCodeData.getText());
@@ -134,8 +133,8 @@ public class SignatureLoader {
 
     public void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest) {
         String signatureType = deleteSignatureFileRequest.getSignatureType();
-        if ("image".equals(signatureType) ||
-                "digital".equals(signatureType)) {
+        if (IMAGE.equals(signatureType) ||
+                DIGITAL.equals(signatureType)) {
             new File(deleteSignatureFileRequest.getGuid()).delete();
         } else {
             File file = new File(deleteSignatureFileRequest.getGuid());
@@ -182,14 +181,14 @@ public class SignatureLoader {
             // encode ByteArray into String
             String encodedImage = new String(Base64.getEncoder().encode(bytes));
             loadedPage.setData(encodedImage);
-            if ("text".equals(loadSignatureImageRequest.getSignatureType())) {
+            if (TEXT.equals(loadSignatureImageRequest.getSignatureType())) {
                 String fileName = getXmlFilePath(file);
                 TextXmlEntity textXmlEntity = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
                 loadedPage.setProps(textXmlEntity);
             }
             // return loaded page object
             return loadedPage;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
     }
