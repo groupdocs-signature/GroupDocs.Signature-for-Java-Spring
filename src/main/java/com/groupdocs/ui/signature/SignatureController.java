@@ -6,7 +6,7 @@ import com.groupdocs.ui.model.request.LoadDocumentPageRequest;
 import com.groupdocs.ui.model.request.LoadDocumentRequest;
 import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadDocumentEntity;
-import com.groupdocs.ui.model.response.LoadedPageEntity;
+import com.groupdocs.ui.model.response.PageDescriptionEntity;
 import com.groupdocs.ui.signature.model.request.*;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
@@ -89,7 +89,7 @@ public class SignatureController {
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadDocumentPage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public LoadedPageEntity loadDocumentPage(@RequestBody LoadDocumentPageRequest loadDocumentPageRequest){
+    public PageDescriptionEntity loadDocumentPage(@RequestBody LoadDocumentPageRequest loadDocumentPageRequest){
         return signatureService.loadDocumentPage(loadDocumentPageRequest);
     }
 
@@ -145,14 +145,14 @@ public class SignatureController {
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadSignatureImage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public LoadedPageEntity loadSignatureImage(@RequestBody LoadSignatureImageRequest loadSignatureImageRequest) {
+    public PageDescriptionEntity loadSignatureImage(@RequestBody LoadSignatureImageRequest loadSignatureImageRequest) {
         try {
-            LoadedPageEntity loadedPage = new LoadedPageEntity();
+            PageDescriptionEntity loadedPage = new PageDescriptionEntity();
             // get page image
             byte[] bytes = Files.readAllBytes(new File(loadSignatureImageRequest.getGuid()).toPath());
             // encode ByteArray into String
             String encodedImage = new String(Base64.getEncoder().encode(bytes));
-            loadedPage.setPageImage(encodedImage);
+            loadedPage.setData(encodedImage);
             // return loaded page object
             return loadedPage;
         }catch (Exception ex){

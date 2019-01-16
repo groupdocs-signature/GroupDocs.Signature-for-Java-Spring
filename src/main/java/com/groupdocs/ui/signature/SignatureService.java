@@ -4,7 +4,7 @@ import com.groupdocs.ui.model.request.LoadDocumentPageRequest;
 import com.groupdocs.ui.model.request.LoadDocumentRequest;
 import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadDocumentEntity;
-import com.groupdocs.ui.model.response.LoadedPageEntity;
+import com.groupdocs.ui.model.response.PageDescriptionEntity;
 import com.groupdocs.ui.signature.model.request.*;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
@@ -48,7 +48,7 @@ public interface SignatureService {
      * @param loadDocumentPageRequest document page request data
      * @return loaded document page
      */
-    LoadedPageEntity loadDocumentPage(LoadDocumentPageRequest loadDocumentPageRequest);
+    PageDescriptionEntity loadDocumentPage(LoadDocumentPageRequest loadDocumentPageRequest);
 
     /**
      * Sign document by digital signature

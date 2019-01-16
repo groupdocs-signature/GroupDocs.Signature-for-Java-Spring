@@ -15,7 +15,6 @@ import com.groupdocs.ui.model.request.LoadDocumentPageRequest;
 import com.groupdocs.ui.model.request.LoadDocumentRequest;
 import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadDocumentEntity;
-import com.groupdocs.ui.model.response.LoadedPageEntity;
 import com.groupdocs.ui.model.response.PageDescriptionEntity;
 import com.groupdocs.ui.signature.model.SignatureDirectory;
 import com.groupdocs.ui.signature.model.request.*;
@@ -183,26 +182,17 @@ public class SignatureServiceImpl implements SignatureService {
      */
     @Override
     public LoadDocumentEntity getDocumentDescription(LoadDocumentRequest loadDocumentRequest) {
+        String documentGuid = loadDocumentRequest.getGuid();
+        String password = loadDocumentRequest.getPassword();
         try {
             // get document info container
-            DocumentDescription documentDescription = signatureHandler.getDocumentDescription(loadDocumentRequest.getGuid(),
-                    loadDocumentRequest.getPassword());
+            DocumentDescription documentDescription = signatureHandler.getDocumentDescription(documentGuid,
+                    password);
             List<PageDescriptionEntity> pagesDescription = new ArrayList<>();
             // get info about each document page
-            for (int i = 1; i <= documentDescription.getPageCount(); i++) {
-                //initiate custom Document description object
-                PageDescriptionEntity description = new PageDescriptionEntity();
-                // get current page size
-                java.awt.Dimension pageSize = signatureHandler.getDocumentPageSize(loadDocumentRequest.getGuid(),
-                        i,
-                        loadDocumentRequest.getPassword(),
-                        0.0,
-                        0.0,
-                        null);
-                // set current page info for result
-                description.setHeight(pageSize.getHeight());
-                description.setWidth(pageSize.getWidth());
-                description.setNumber(i);
+            boolean loadData = signatureConfiguration.getPreloadPageCount() == 0;
+            for(int i = 1; i <= documentDescription.getPageCount(); i++) {
+                PageDescriptionEntity description = getPageDescriptionEntity(documentGuid, password, i, loadData);
                 pagesDescription.add(description);
             }
             LoadDocumentEntity loadDocumentEntity = new LoadDocumentEntity();
@@ -220,20 +210,15 @@ public class SignatureServiceImpl implements SignatureService {
      * {@inheritDoc}
      */
     @Override
-    public LoadedPageEntity loadDocumentPage(LoadDocumentPageRequest loadDocumentPageRequest) {
+    public PageDescriptionEntity loadDocumentPage(LoadDocumentPageRequest loadDocumentPageRequest) {
         try {
-            LoadedPageEntity loadedPage = new LoadedPageEntity();
-            // get page image
-            byte[] bytes = signatureHandler.getPageImage(loadDocumentPageRequest.getGuid(),
-                    loadDocumentPageRequest.getPage(),
-                    loadDocumentPageRequest.getPassword(),
-                    null,
-                    100);
-            // encode ByteArray into String
-            String encodedImage = new String(Base64.getEncoder().encode(bytes));
-            loadedPage.setPageImage(encodedImage);
+            String documentGuid = loadDocumentPageRequest.getGuid();
+            int pageNumber = loadDocumentPageRequest.getPage();
+            String password = loadDocumentPageRequest.getPassword();
+            // get page data
+            PageDescriptionEntity pageDescriptionEntity = getPageDescriptionEntity(documentGuid, password, pageNumber, true);
             // return loaded page object
-            return loadedPage;
+            return pageDescriptionEntity;
         } catch (Exception ex) {
             logger.error("Exception occurred while loading document page", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
@@ -249,10 +234,7 @@ public class SignatureServiceImpl implements SignatureService {
             // get/set parameters
             String documentGuid = signDocumentRequest.getGuid();
             String password = signDocumentRequest.getPassword();
-            List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-            if (signaturesData == null || signaturesData.isEmpty()) {
-                throw new IllegalArgumentException("Sign data is empty");
-            }
+            List<SignatureDataEntity> signaturesData = getSignatureDataEntities(signDocumentRequest);
             // get signed document name
             String signedFileName = new File(documentGuid).getName();
             // initiate signed document response
@@ -303,10 +285,7 @@ public class SignatureServiceImpl implements SignatureService {
             // get/set parameters
             String documentGuid = signDocumentRequest.getGuid();
             String password = signDocumentRequest.getPassword();
-            List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-            if (signaturesData == null || signaturesData.isEmpty()) {
-                throw new IllegalArgumentException("Sign data is empty");
-            }
+            List<SignatureDataEntity> signaturesData = getSignatureDataEntities(signDocumentRequest);
             SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
             // set signature password if required
             for (int i = 0; i < signaturesData.size(); i++) {
@@ -332,6 +311,14 @@ public class SignatureServiceImpl implements SignatureService {
         }
     }
 
+    public List<SignatureDataEntity> getSignatureDataEntities(SignDocumentRequest signDocumentRequest) {
+        List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
+        if (signaturesData == null || signaturesData.isEmpty()) {
+            throw new IllegalArgumentException("Sign data is empty");
+        }
+        return signaturesData;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -342,10 +329,7 @@ public class SignatureServiceImpl implements SignatureService {
             // get/set parameters
             String documentGuid = signDocumentRequest.getGuid();
             String password = signDocumentRequest.getPassword();
-            List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-            if (signaturesData == null || signaturesData.isEmpty()) {
-                throw new IllegalArgumentException("Sign data is empty");
-            }
+            List<SignatureDataEntity> signaturesData = getSignatureDataEntities(signDocumentRequest);
             SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
             // mimeType should now be something like "image/png" if the document is image
             if (supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid))) {
@@ -387,11 +371,7 @@ public class SignatureServiceImpl implements SignatureService {
             // get/set parameters
             String documentGuid = signDocumentRequest.getGuid();
             String password = signDocumentRequest.getPassword();
-            List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-
-            if (signaturesData == null || signaturesData.isEmpty()) {
-                throw new IllegalArgumentException("Sign data is empty");
-            }
+            List<SignatureDataEntity> signaturesData = getSignatureDataEntities(signDocumentRequest);
 
             String signatureType = signaturesData.get(0).getSignatureType();
 
@@ -437,11 +417,7 @@ public class SignatureServiceImpl implements SignatureService {
             // get/set parameters
             String documentGuid = signDocumentRequest.getGuid();
             String password = signDocumentRequest.getPassword();
-            List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
-
-            if (signaturesData == null || signaturesData.isEmpty()) {
-                throw new IllegalArgumentException("Sign data is empty");
-            }
+            List<SignatureDataEntity> signaturesData = getSignatureDataEntities(signDocumentRequest);
 
             SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
             // prepare signing options and sign document
@@ -589,6 +565,25 @@ public class SignatureServiceImpl implements SignatureService {
                 bufImage.flush();
             }
         }
+    }
+
+    private PageDescriptionEntity getPageDescriptionEntity(String documentGuid, String password, int i, boolean withImage) throws Exception {
+        PageDescriptionEntity description = new PageDescriptionEntity();
+        // get current page size
+        Dimension pageSize = signatureHandler.getDocumentPageSize(documentGuid, i, password, (double)0, (double)0, null);
+        // set current page info for result
+        description.setHeight(pageSize.getHeight());
+        description.setWidth(pageSize.getWidth());
+        description.setNumber(i);
+        if (withImage) {
+            loadImage(documentGuid, password, i, description);
+        }
+        return description;
+    }
+
+    private void loadImage(String documentGuid, String password, int i, PageDescriptionEntity description) throws Exception {
+        byte[] pageImage = signatureHandler.getPageImage(documentGuid, i, password, null, 100);
+        description.setData(new String(Base64.getEncoder().encode(pageImage)));
     }
 
     /**
