@@ -13,16 +13,16 @@ import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
  * @author Aspose Pty Ltd
  */
 public class BarCodeSigner extends Signer{
-    private OpticalXmlEntity qrCodeData;
+    private OpticalXmlEntity barCodeData;
 
     /**
      * Constructor
-     * @param qrCodeData OpticalXmlEntity
+     * @param barCodeData OpticalXmlEntity
      * @param signatureData SignatureDataEntity
      */
-    public BarCodeSigner(OpticalXmlEntity qrCodeData, SignatureDataEntity signatureData){
+    public BarCodeSigner(OpticalXmlEntity barCodeData, SignatureDataEntity signatureData){
         super(signatureData);
-        this.qrCodeData = qrCodeData;
+        this.barCodeData = barCodeData;
     }
 
     /**
@@ -32,10 +32,9 @@ public class BarCodeSigner extends Signer{
     @Override
     public PdfBarcodeSignOptions signPdf(){
         // setup options
-        PdfBarcodeSignOptions signOptions = new PdfBarcodeSignOptions(qrCodeData.getText());
+        PdfBarcodeSignOptions signOptions = new PdfBarcodeSignOptions(barCodeData.getText());
         fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
         return signOptions;
     }
 
@@ -46,11 +45,8 @@ public class BarCodeSigner extends Signer{
     @Override
     public ImagesBarcodeSignOptions signImage(){
         // setup options
-        ImagesBarcodeSignOptions signOptions = new ImagesBarcodeSignOptions(qrCodeData.getText());
+        ImagesBarcodeSignOptions signOptions = new ImagesBarcodeSignOptions(barCodeData.getText());
         fillProperties(signOptions);
-        if(signatureData.getAngle() != 0) {
-            signOptions.setRotationAngle(signatureData.getAngle());
-        }
         return signOptions;
     }
 
@@ -62,6 +58,9 @@ public class BarCodeSigner extends Signer{
         signOptions.setHeight(signatureData.getImageHeight());
         signOptions.setTop(signatureData.getTop());
         signOptions.setLeft(signatureData.getLeft());
+        if(signatureData.getAngle() != 0) {
+            signOptions.setRotationAngle(signatureData.getAngle());
+        }
     }
 
     /**
@@ -71,10 +70,9 @@ public class BarCodeSigner extends Signer{
     @Override
     public WordsBarcodeSignOptions signWord(){
         // setup options
-        WordsBarcodeSignOptions signOptions = new WordsBarcodeSignOptions(qrCodeData.getText());
+        WordsBarcodeSignOptions signOptions = new WordsBarcodeSignOptions(barCodeData.getText());
         fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
         return signOptions;
     }
 
@@ -85,10 +83,9 @@ public class BarCodeSigner extends Signer{
     @Override
     public CellsBarcodeSignOptions signCells(){
         // setup options
-        CellsBarcodeSignOptions signOptions = new CellsBarcodeSignOptions(qrCodeData.getText());
+        CellsBarcodeSignOptions signOptions = new CellsBarcodeSignOptions(barCodeData.getText());
         fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
         return signOptions;
     }
 
@@ -99,10 +96,9 @@ public class BarCodeSigner extends Signer{
     @Override
     public SlidesBarcodeSignOptions signSlides(){
         // setup options
-        SlidesBarcodeSignOptions signOptions = new SlidesBarcodeSignOptions(qrCodeData.getText());
+        SlidesBarcodeSignOptions signOptions = new SlidesBarcodeSignOptions(barCodeData.getText());
         fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
         return signOptions;
     }
 
