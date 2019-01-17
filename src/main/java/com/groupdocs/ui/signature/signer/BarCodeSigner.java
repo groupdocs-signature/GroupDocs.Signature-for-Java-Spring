@@ -51,7 +51,7 @@ public class BarCodeSigner extends Signer{
     }
 
     private void fillProperties(BarcodeSignOptions signOptions) {
-        signOptions.setEncodeType(BarcodeTypes.CODE_39_STANDARD);
+        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
         signOptions.setHorizontalAlignment(HorizontalAlignment.None);
         signOptions.setVerticalAlignment(VerticalAlignment.None);
         signOptions.setWidth(signatureData.getImageWidth());
