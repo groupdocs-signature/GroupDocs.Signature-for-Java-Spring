@@ -42,5 +42,4 @@ public abstract class XmlEntity {
     public void setHeight(int height) {
         this.height = height;
     }
-
 }
