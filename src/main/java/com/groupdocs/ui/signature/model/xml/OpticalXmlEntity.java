@@ -12,5 +12,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="OpticalXmlEntity", namespace="OpticalXmlEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OpticalXmlEntity extends XmlEntityWithImage {
+    private Boolean temp = Boolean.FALSE;
 
+    public Boolean getTemp() {
+        return temp;
+    }
+
+    public void setTemp(Boolean temp) {
+        this.temp = temp;
+    }
 }

@@ -46,9 +46,6 @@ public class QrCodeSigner extends Signer{
         // setup options
         ImagesQRCodeSignOptions signOptions = new ImagesQRCodeSignOptions(qrCodeData.getText());
         fillProperties(signOptions);
-        if(signatureData.getAngle() != 0) {
-            signOptions.setRotationAngle(signatureData.getAngle());
-        }
         return signOptions;
     }
 
@@ -97,7 +94,9 @@ public class QrCodeSigner extends Signer{
         signOptions.setTop(signatureData.getTop());
         signOptions.setLeft(signatureData.getLeft());
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
+        if(signatureData.getAngle() != 0) {
+            signOptions.setRotationAngle(signatureData.getAngle());
+        }
     }
 
 }

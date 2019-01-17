@@ -303,16 +303,19 @@ public class SignatureServiceImpl implements SignatureService {
             collection.add(barCodeSigner.signImage());
         }
         File file = writeImageFile(signatureData.getImageGuid(), signatureDataEntity, previewPath);
-        try {
-            String fileName = FilenameUtils.removeExtension(file.getName());
-            // Save data to xml file
-            new XMLReaderWriter<OpticalXmlEntity>().write(String.format("%s%s%s.xml", xmlPath, File.separator, fileName), signatureData);
-        } catch (JAXBException e) {
-            logger.error("Exception occurred while saving optical code signature", e);
-            throw new TotalGroupDocsException(e.getMessage(), e);
-        }
-
         signWithImage(previewPath, signatureData, collection, file.toPath().toString());
+        if (!signatureData.getTemp()) {
+            try {
+                String fileName = FilenameUtils.removeExtension(file.getName());
+                // Save data to xml file
+                new XMLReaderWriter<OpticalXmlEntity>().write(String.format("%s%s%s.xml", xmlPath, File.separator, fileName), signatureData);
+            } catch (JAXBException e) {
+                logger.error("Exception occurred while saving optical code signature", e);
+                throw new TotalGroupDocsException(e.getMessage(), e);
+            }
+        } else {
+            file.delete();
+        }
 
         signatureData.setWidth(signatureDataEntity.getImageWidth());
         signatureData.setHeight(signatureDataEntity.getImageHeight());
