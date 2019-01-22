@@ -42,10 +42,7 @@ public class SignatureLoader {
             Path path = new File(dataPath).toPath();
             for (File file : filesList) {
                 // check if current file/folder is hidden
-                if (file.isDirectory() || file.isHidden() || file.toPath().equals(path)) {
-                    // ignore current file and skip to next one
-                    continue;
-                } else {
+                if (!file.isDirectory() && checkFile(path, file)) {
                     SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, true);
                     // add object to array list
                     fileList.add(fileDescription);
@@ -72,10 +69,7 @@ public class SignatureLoader {
             Path path = new File(dataPath).toPath();
             for (File file : filesList) {
                 // check if current file/folder is hidden
-                if (file.isHidden() || file.toPath().equals(path)) {
-                    // ignore current file and skip to next one
-                    continue;
-                } else {
+                if (checkFile(path, file)) {
                     SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, false);
                     // add object to array list
                     fileList.add(fileDescription);
@@ -85,6 +79,10 @@ public class SignatureLoader {
         } catch (Exception ex) {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
+    }
+
+    private boolean checkFile(Path path, File file) {
+        return !file.isHidden() && !file.toPath().equals(path);
     }
 
     /**
@@ -115,10 +113,7 @@ public class SignatureLoader {
                 Path path = new File(dataPath).toPath();
                 for (File file : filesList) {
                     // check if current file/folder is hidden
-                    if (file.isHidden() || file.toPath().equals(path)) {
-                        // ignore current file and skip to next one
-                        continue;
-                    } else {
+                    if (checkFile(path, file)) {
                         SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, true);
                         // add object to array list
                         fileList.add(fileDescription);
