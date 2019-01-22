@@ -61,21 +61,9 @@ public class SignatureLoader {
      */
     public List<SignatureFileDescriptionEntity> loadFiles(String currentPath, String dataPath) {
         File directory = new File(currentPath);
-        List<SignatureFileDescriptionEntity> fileList = new ArrayList<>();
         List<File> filesList = Arrays.asList(directory.listFiles());
         try {
-            // sort list of files and folders
-            filesList = Ordering.from(FILE_TYPE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
-            Path path = new File(dataPath).toPath();
-            for (File file : filesList) {
-                // check if current file/folder is hidden
-                if (checkFile(path, file)) {
-                    SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, false);
-                    // add object to array list
-                    fileList.add(fileDescription);
-                }
-            }
-            return fileList;
+            return getResultFileList(dataPath, filesList ,false);
         } catch (Exception ex) {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
@@ -94,7 +82,6 @@ public class SignatureLoader {
         String imagesPath = currentPath + DATA_PREVIEW_FOLDER;
         String xmlPath = currentPath + DATA_XML_FOLDER;
         File images = new File(imagesPath);
-        List<SignatureFileDescriptionEntity> fileList = new ArrayList<>();
         try {
             if(images.listFiles() != null) {
                 List<File> imageFiles = Arrays.asList(images.listFiles());
@@ -108,22 +95,28 @@ public class SignatureLoader {
                         }
                     }
                 }
-                // sort list of files and folders
-                filesList = Ordering.from(FILE_TYPE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
-                Path path = new File(dataPath).toPath();
-                for (File file : filesList) {
-                    // check if current file/folder is hidden
-                    if (checkFile(path, file)) {
-                        SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, true);
-                        // add object to array list
-                        fileList.add(fileDescription);
-                    }
-                }
+                return getResultFileList(dataPath, filesList, true);
             }
-            return fileList;
+            return Collections.EMPTY_LIST;
         } catch (Exception ex){
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
+    }
+
+    private List<SignatureFileDescriptionEntity> getResultFileList(String dataPath, List<File> filesList, boolean withImage) throws IOException {
+        List<SignatureFileDescriptionEntity> fileList = new ArrayList<>();
+        // sort list of files and folders
+        filesList = Ordering.from(FILE_TYPE_COMPARATOR).compound(FILE_NAME_COMPARATOR).sortedCopy(filesList);
+        Path path = new File(dataPath).toPath();
+        for (File file : filesList) {
+            // check if current file/folder is hidden
+            if (checkFile(path, file)) {
+                SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, withImage);
+                // add object to array list
+                fileList.add(fileDescription);
+            }
+        }
+        return fileList;
     }
 
     /**
