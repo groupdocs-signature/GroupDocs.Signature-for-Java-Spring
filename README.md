@@ -62,6 +62,17 @@ mvn clean spring-boot:run
 ## Open http://localhost:8080/signature/ in your favorite browser.
 ```
 
+#### Build war from source
+
+Download [source code](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Spring/archive/master.zip) from github or clone this repository.
+
+```bash
+git clone https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Spring
+cd GroupDocs.Signature-for-Java-Spring
+mvn package -P war
+## Deploy this war on any server
+```
+
 #### Binary release (with all dependencies)
 
 Download [latest release](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Spring/releases/latest) from [releases page](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Spring/releases). 
@@ -72,7 +83,7 @@ Download [latest release](https://github.com/groupdocs-signature/GroupDocs.Signa
 curl -J -L -o release.tar.gz https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Spring/releases/download/1.7.4/release.tar.gz
 tar -xvzf release.tar.gz
 cd release
-java -jar signature-spring-1.7.4.jar configuration.yaml
+java -jar signature-spring-1.7.4.jar configuration.yml
 ## Open http://localhost:8080/signature/ in your favorite browser.
 ```
 

@@ -24,17 +24,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Nullable;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
 import static com.groupdocs.ui.signature.PathConstants.OUTPUT_FOLDER;
+import static com.groupdocs.ui.util.Utils.getStringFromStream;
+import static com.groupdocs.ui.util.Utils.setLocalPort;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -52,12 +53,17 @@ public class SignatureController {
 
     /**
      * Get signature page
+     *
+     * @param request http request
      * @param model model data for template
      * @return template name
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String getView(Map<String, Object> model){
+    public String getView(HttpServletRequest request, Map<String, Object> model){
+        setLocalPort(request, globalConfiguration.getServer());
+
         model.put("globalConfiguration", globalConfiguration);
+
         logger.debug("signature config: {}", signatureService.getSignatureConfiguration());
         model.put("signatureConfiguration", signatureService.getSignatureConfiguration());
         return "signature";
@@ -148,11 +154,10 @@ public class SignatureController {
     public PageDescriptionEntity loadSignatureImage(@RequestBody LoadSignatureImageRequest loadSignatureImageRequest) {
         try {
             PageDescriptionEntity loadedPage = new PageDescriptionEntity();
+            File file = new File(loadSignatureImageRequest.getGuid());
             // get page image
-            byte[] bytes = Files.readAllBytes(new File(loadSignatureImageRequest.getGuid()).toPath());
-            // encode ByteArray into String
-            String encodedImage = new String(Base64.getEncoder().encode(bytes));
-            loadedPage.setData(encodedImage);
+            FileInputStream fileInputStreamReader = new FileInputStream(file);
+            loadedPage.setData(getStringFromStream(fileInputStreamReader));
             // return loaded page object
             return loadedPage;
         }catch (Exception ex){

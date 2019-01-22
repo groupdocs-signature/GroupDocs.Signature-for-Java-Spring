@@ -14,8 +14,7 @@ import java.util.*;
 
 import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
-import static com.groupdocs.ui.util.Utils.FILE_NAME_COMPARATOR;
-import static com.groupdocs.ui.util.Utils.FILE_TYPE_COMPARATOR;
+import static com.groupdocs.ui.util.Utils.*;
 
 /**
  * SignatureLoader
@@ -43,7 +42,7 @@ public class SignatureLoader {
             Path path = new File(dataPath).toPath();
             for (File file : filesList) {
                 // check if current file/folder is hidden
-                if (file.isHidden() || file.toPath().equals(path)) {
+                if (file.isDirectory() || file.isHidden() || file.toPath().equals(path)) {
                     // ignore current file and skip to next one
                     continue;
                 } else {
@@ -151,9 +150,7 @@ public class SignatureLoader {
         if (withImage) {
             // get image Base64 encoded String
             FileInputStream fileInputStreamReader = new FileInputStream(file);
-            byte[] bytes = new byte[(int) file.length()];
-            fileInputStreamReader.read(bytes);
-            fileDescription.setImage(Base64.getEncoder().encodeToString(bytes));
+            fileDescription.setImage(getStringFromStream(fileInputStreamReader));
         }
         return fileDescription;
     }
