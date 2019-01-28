@@ -39,6 +39,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -51,8 +52,7 @@ import java.util.List;
 import static com.groupdocs.ui.signature.PathConstants.DATA_FOLDER;
 import static com.groupdocs.ui.signature.PathConstants.OUTPUT_FOLDER;
 import static com.groupdocs.ui.signature.model.SignatureDirectory.*;
-import static com.groupdocs.ui.util.Utils.getFreeFileName;
-import static com.groupdocs.ui.util.Utils.uploadFile;
+import static com.groupdocs.ui.util.Utils.*;
 
 @Service
 public class SignatureServiceImpl implements SignatureService {
@@ -294,7 +294,7 @@ public class SignatureServiceImpl implements SignatureService {
                     continue;
                 } else {
                     // check if document type is image
-                    if (supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid))) {
+                    if (supportedImageFormats.contains(parseFileExtension(documentGuid))) {
                         signatureDataEntity.setDocumentType("image");
                     }
                     // initiate image signer object
@@ -332,7 +332,7 @@ public class SignatureServiceImpl implements SignatureService {
             List<SignatureDataEntity> signaturesData = getSignatureDataEntities(signDocumentRequest);
             SignatureOptionsCollection signsCollection = new SignatureOptionsCollection();
             // mimeType should now be something like "image/png" if the document is image
-            if (supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid))) {
+            if (supportedImageFormats.contains(parseFileExtension(documentGuid))) {
                 signaturesData.get(0).setDocumentType("image");
             }
 
@@ -390,7 +390,7 @@ public class SignatureServiceImpl implements SignatureService {
                     String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
                     OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
                     // check if document type is image
-                    if (supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid))) {
+                    if (supportedImageFormats.contains(parseFileExtension(documentGuid))) {
                         signatureDataEntity.setDocumentType("image");
                     }
                     // initiate QRCode signer object
@@ -430,7 +430,7 @@ public class SignatureServiceImpl implements SignatureService {
                     String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
                     TextXmlEntity textData = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
                     // check if document type is image
-                    if (supportedImageFormats.contains(FilenameUtils.getExtension(documentGuid))) {
+                    if (supportedImageFormats.contains(parseFileExtension(documentGuid))) {
                         signatureDataEntity.setDocumentType("image");
                     }
                     // initiate QRCode signer object
@@ -701,9 +701,9 @@ public class SignatureServiceImpl implements SignatureService {
         if ("image".equals(signatureType)) {
             // get page image
             try {
-                byte[] bytes = Files.readAllBytes(new File(uploadedDocument.getGuid()).toPath());
+                File file = new File(uploadedDocument.getGuid());
                 // encode ByteArray into String
-                String encodedImage = new String(Base64.getEncoder().encode(bytes));
+                String encodedImage = getStringFromStream(new FileInputStream(file));
                 uploadedDocument.setImage(encodedImage);
             } catch (IOException ex) {
                 logger.error("Exception occurred read images in document", ex);
