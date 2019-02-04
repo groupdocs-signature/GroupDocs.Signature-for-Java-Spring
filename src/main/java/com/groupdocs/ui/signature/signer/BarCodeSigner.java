@@ -33,7 +33,7 @@ public class BarCodeSigner extends Signer{
     public PdfBarcodeSignOptions signPdf(){
         // setup options
         PdfBarcodeSignOptions signOptions = new PdfBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.CODE_39_STANDARD);
+        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
         signOptions.setHorizontalAlignment(HorizontalAlignment.None);
         signOptions.setVerticalAlignment(VerticalAlignment.None);
         signOptions.setWidth(signatureData.getImageWidth());
@@ -54,7 +54,7 @@ public class BarCodeSigner extends Signer{
     public ImagesBarcodeSignOptions signImage(){
         // setup options
         ImagesBarcodeSignOptions signOptions = new ImagesBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.CODE_39_STANDARD);
+        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
         signOptions.setHorizontalAlignment(HorizontalAlignment.None);
         signOptions.setVerticalAlignment(VerticalAlignment.None);
         signOptions.setWidth(signatureData.getImageWidth());
@@ -76,7 +76,7 @@ public class BarCodeSigner extends Signer{
     public WordsBarcodeSignOptions signWord(){
         // setup options
         WordsBarcodeSignOptions signOptions = new WordsBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.CODE_39_STANDARD);
+        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
         signOptions.setHorizontalAlignment(HorizontalAlignment.None);
         signOptions.setVerticalAlignment(VerticalAlignment.None);
         signOptions.setWidth(signatureData.getImageWidth());
@@ -97,7 +97,7 @@ public class BarCodeSigner extends Signer{
     public CellsBarcodeSignOptions signCells(){
         // setup options
         CellsBarcodeSignOptions signOptions = new CellsBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.CODE_39_STANDARD);
+        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
         signOptions.setHorizontalAlignment(HorizontalAlignment.None);
         signOptions.setVerticalAlignment(VerticalAlignment.None);
         signOptions.setWidth(signatureData.getImageWidth());
@@ -118,7 +118,7 @@ public class BarCodeSigner extends Signer{
     public SlidesBarcodeSignOptions signSlides(){
         // setup options
         SlidesBarcodeSignOptions signOptions = new SlidesBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.CODE_39_STANDARD);
+        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
         signOptions.setHorizontalAlignment(HorizontalAlignment.None);
         signOptions.setVerticalAlignment(VerticalAlignment.None);
         signOptions.setWidth(signatureData.getImageWidth());
