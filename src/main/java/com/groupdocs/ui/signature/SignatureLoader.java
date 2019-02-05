@@ -119,16 +119,21 @@ public class SignatureLoader {
             // check if current file/folder is hidden
             if (checkFile(path, file)) {
                 SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, withImage);
-                if (QR_CODE.equals(signatureType) || BAR_CODE.equals(signatureType)) {
-                    String fileName = file.getAbsolutePath().replace(DATA_PREVIEW_FOLDER, DATA_XML_FOLDER).replace(FilenameUtils.getExtension(file.getName()), "xml");
-                    OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
-                    fileDescription.setText(opticalCodeData.getText());
-                }
+                String fileName = file.getAbsolutePath().replace(DATA_PREVIEW_FOLDER, DATA_XML_FOLDER).replace(FilenameUtils.getExtension(file.getName()), "xml");
+                fileDescription.setText(getQrBarCodeText(fileName, signatureType));
                 // add object to array list
                 fileList.add(fileDescription);
             }
         }
         return fileList;
+    }
+
+    private String getQrBarCodeText(String fileName, String signatureType) throws JAXBException {
+        if (QR_CODE.equals(signatureType) || BAR_CODE.equals(signatureType)) {
+            OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
+            return opticalCodeData.getText();
+        }
+        return "";
     }
 
     public void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest) {
