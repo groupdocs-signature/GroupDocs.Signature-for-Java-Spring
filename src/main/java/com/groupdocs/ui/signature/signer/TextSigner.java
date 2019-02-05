@@ -8,17 +8,13 @@ import com.groupdocs.signature.domain.enums.WordsTextSignatureImplementation;
 import com.groupdocs.signature.domain.enums.CellsTextSignatureImplementation;
 import com.groupdocs.signature.domain.enums.SlidesTextSignatureImplementation;
 import com.groupdocs.signature.options.appearances.PdfTextAnnotationAppearance;
-import com.groupdocs.signature.options.textsignature.SlidesSignTextOptions;
-import com.groupdocs.signature.options.textsignature.CellsSignTextOptions;
-import com.groupdocs.signature.options.textsignature.WordsSignTextOptions;
-import com.groupdocs.signature.options.textsignature.ImagesSignTextOptions;
-import com.groupdocs.signature.options.textsignature.PdfSignTextOptions;
+import com.groupdocs.signature.options.textsignature.*;
 import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
 
 /**
  * TextSigner
- * Signs documents with the stamp signature
+ * Signs documents with the text signature
  * @author Aspose Pty Ltd
  */
 public class TextSigner extends Signer{
@@ -41,28 +37,9 @@ public class TextSigner extends Signer{
     @Override
     public PdfSignTextOptions signPdf(){
         PdfSignTextOptions signOptions = new PdfSignTextOptions(textData.getText());
-        signOptions.setLeft(signatureData.getLeft());
-        signOptions.setTop(signatureData.getTop());
-        int imageHeight = signatureData.getImageHeight();
-        signOptions.setHeight(imageHeight);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setRotationAngle(signatureData.getAngle());
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        // setup colors settings
-        signOptions.setBackgroundColor(getColor(textData.getBackgroundColor()));
-        // setup text color
-        signOptions.setForeColor(getColor(textData.getFontColor()));
+        fillTextOptions(signOptions);
         signOptions.setSignatureImplementation(PdfTextSignatureImplementation.Image);
-        // setup Font options
-        signOptions.getFont().setBold(textData.getBold());
-        signOptions.getFont().setItalic(textData.getItalic());
-        signOptions.getFont().setUnderline(textData.getUnderline());
-        signOptions.getFont().setFontFamily(textData.getFont());
-        // set reduction size - required to recalculate Text resizing in the UI
-        int reductionSize = getReductionSize(imageHeight);
-        signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
         // specify extended appearance options
         PdfTextAnnotationAppearance appearance = new PdfTextAnnotationAppearance();
         signOptions.setAppearance(appearance);
@@ -89,6 +66,13 @@ public class TextSigner extends Signer{
     @Override
     public ImagesSignTextOptions signImage(){
         ImagesSignTextOptions signOptions = new ImagesSignTextOptions(textData.getText());
+        fillTextOptions(signOptions);
+        //type of implementation
+        signOptions.setSignatureImplementation(ImagesTextSignatureImplementation.TextAsImage);
+        return signOptions;
+    }
+
+    private void fillTextOptions(SignTextOptions signOptions) {
         signOptions.setLeft(signatureData.getLeft());
         signOptions.setTop(signatureData.getTop());
         int imageHeight = signatureData.getImageHeight();
@@ -109,9 +93,6 @@ public class TextSigner extends Signer{
         // set reduction size - required to recalculate font size after signature resizing in the UI
         int reductionSize = getReductionSize(imageHeight);
         signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
-        //type of implementation
-        signOptions.setSignatureImplementation(ImagesTextSignatureImplementation.TextAsImage);
-        return signOptions;
     }
 
     /**
@@ -121,27 +102,8 @@ public class TextSigner extends Signer{
     @Override
     public WordsSignTextOptions signWord(){
         WordsSignTextOptions signOptions = new WordsSignTextOptions(textData.getText());
-        signOptions.setLeft(signatureData.getLeft());
-        signOptions.setTop(signatureData.getTop());
-        int imageHeight = signatureData.getImageHeight();
-        signOptions.setHeight(imageHeight);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setRotationAngle(signatureData.getAngle());
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        // setup colors settings
-        signOptions.setBackgroundColor(getColor(textData.getBackgroundColor()));
-        // setup text color
-        signOptions.setForeColor(getColor(textData.getFontColor()));
-        // setup Font options
-        signOptions.getFont().setBold(textData.getBold());
-        signOptions.getFont().setItalic(textData.getItalic());
-        signOptions.getFont().setUnderline(textData.getUnderline());
-        signOptions.getFont().setFontFamily(textData.getFont());
-        // set reduction size - required to recalculate Text resizing in the UI
-        int reductionSize = getReductionSize(imageHeight);
-        signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
+        fillTextOptions(signOptions);
         signOptions.setSignatureImplementation(WordsTextSignatureImplementation.TextAsImage);
         return signOptions;
     }
@@ -153,30 +115,11 @@ public class TextSigner extends Signer{
     @Override
     public CellsSignTextOptions signCells(){
         CellsSignTextOptions signOptions = new CellsSignTextOptions(textData.getText());
-        signOptions.setLeft(signatureData.getLeft());
-        signOptions.setTop(signatureData.getTop());
-        int imageHeight = signatureData.getImageHeight();
-        signOptions.setHeight(imageHeight);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setRotationAngle(signatureData.getAngle());
         signOptions.setSheetNumber(signatureData.getPageNumber());
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        // setup colors settings
-        signOptions.setBackgroundColor(getColor(textData.getBackgroundColor()));
-        // setup text color
-        signOptions.setForeColor(getColor(textData.getFontColor()));
-        // setup Font options
-        signOptions.getFont().setBold(textData.getBold());
-        signOptions.getFont().setItalic(textData.getItalic());
-        signOptions.getFont().setUnderline(textData.getUnderline());
-        signOptions.getFont().setFontFamily(textData.getFont());
+        fillTextOptions(signOptions);
+        signOptions.setBorderVisiblity(true);
         //type of implementation
         signOptions.setSignatureImplementation(CellsTextSignatureImplementation.TextAsImage);
-        // set reduction size - required to recalculate Text resizing in the UI
-        int reductionSize = getReductionSize(imageHeight);
-        signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
-        signOptions.setBorderVisiblity(true);
         return signOptions;
     }
 
@@ -187,27 +130,8 @@ public class TextSigner extends Signer{
     @Override
     public SlidesSignTextOptions signSlides(){
         SlidesSignTextOptions signOptions = new SlidesSignTextOptions(textData.getText());
-        signOptions.setLeft(signatureData.getLeft());
-        signOptions.setTop(signatureData.getTop());
-        int imageHeight = signatureData.getImageHeight();
-        signOptions.setHeight(imageHeight);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setRotationAngle(signatureData.getAngle());
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        // setup colors settings
-        signOptions.setBackgroundColor(getColor(textData.getBackgroundColor()));
-        // setup text color
-        signOptions.setForeColor(getColor(textData.getFontColor()));
-        // setup Font options
-        signOptions.getFont().setBold(textData.getBold());
-        signOptions.getFont().setItalic(textData.getItalic());
-        signOptions.getFont().setUnderline(textData.getUnderline());
-        signOptions.getFont().setFontFamily(textData.getFont());
-        // set reduction size - required to recalculate Text resizing in the UI
-        int reductionSize = getReductionSize(imageHeight);
-        signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
+        fillTextOptions(signOptions);
         //type of implementation
         signOptions.setSignatureImplementation(SlidesTextSignatureImplementation.TextAsImage);
         return signOptions;

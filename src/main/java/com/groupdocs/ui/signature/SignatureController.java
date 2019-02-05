@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import static com.groupdocs.ui.signature.PathConstants.OUTPUT_FOLDER;
+import static com.groupdocs.ui.util.directory.PathConstants.OUTPUT_FOLDER;
 import static com.groupdocs.ui.util.Utils.setLocalPort;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;

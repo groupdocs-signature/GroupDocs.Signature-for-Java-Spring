@@ -16,7 +16,7 @@ import com.groupdocs.ui.model.request.LoadDocumentRequest;
 import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadDocumentEntity;
 import com.groupdocs.ui.model.response.PageDescriptionEntity;
-import com.groupdocs.ui.signature.model.SignatureDirectory;
+import com.groupdocs.ui.util.directory.SignatureDirectory;
 import com.groupdocs.ui.signature.model.request.*;
 import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
@@ -47,10 +47,10 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
-import static com.groupdocs.ui.signature.PathConstants.DATA_FOLDER;
-import static com.groupdocs.ui.signature.PathConstants.OUTPUT_FOLDER;
+import static com.groupdocs.ui.util.directory.PathConstants.DATA_FOLDER;
+import static com.groupdocs.ui.util.directory.PathConstants.OUTPUT_FOLDER;
 import static com.groupdocs.ui.signature.SignatureType.*;
-import static com.groupdocs.ui.signature.model.SignatureDirectory.*;
+import static com.groupdocs.ui.util.directory.SignatureDirectory.*;
 import static com.groupdocs.ui.util.Utils.*;
 
 @Service

@@ -19,8 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
-import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
+import static com.groupdocs.ui.util.directory.PathConstants.DATA_PREVIEW_FOLDER;
+import static com.groupdocs.ui.util.directory.PathConstants.DATA_XML_FOLDER;
 import static com.groupdocs.ui.signature.SignatureType.*;
 import static com.groupdocs.ui.util.Utils.*;
 

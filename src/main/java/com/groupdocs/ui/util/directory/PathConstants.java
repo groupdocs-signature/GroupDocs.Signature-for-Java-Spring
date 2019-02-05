@@ -1,4 +1,4 @@
-package com.groupdocs.ui.signature;
+package com.groupdocs.ui.util.directory;
 
 import java.io.File;
 

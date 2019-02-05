@@ -3,11 +3,7 @@ package com.groupdocs.ui.signature.signer;
 import com.groupdocs.signature.domain.stamps.StampBackgroundCropType;
 import com.groupdocs.signature.domain.stamps.StampLine;
 import com.groupdocs.signature.domain.stamps.StampTextRepeatType;
-import com.groupdocs.signature.options.stampsignature.CellsStampSignOptions;
-import com.groupdocs.signature.options.stampsignature.WordsStampSignOptions;
-import com.groupdocs.signature.options.stampsignature.ImagesStampSignOptions;
-import com.groupdocs.signature.options.stampsignature.SlidesStampSignOptions;
-import com.groupdocs.signature.options.stampsignature.PdfStampSignOptions;
+import com.groupdocs.signature.options.stampsignature.*;
 import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.xml.StampXmlEntity;
 
@@ -16,13 +12,15 @@ import java.util.List;
 /**
  * StampSigner
  * Signs documents with the stamp signature
+ *
  * @author Aspose Pty Ltd
  */
-public class StampSigner extends Signer{
+public class StampSigner extends Signer {
     private List<StampXmlEntity> stampData;
 
     /**
      * Constructor
+     *
      * @param stampData
      * @param signatureData
      */
@@ -33,103 +31,79 @@ public class StampSigner extends Signer{
 
     /**
      * Add stamp signature data to pdf sign options
+     *
      * @return PdfStampSignOptions
      */
     @Override
-    public PdfStampSignOptions signPdf(){
+    public PdfStampSignOptions signPdf() {
         // setup options
-        PdfStampSignOptions pdfSignOptions = new PdfStampSignOptions();
-        pdfSignOptions.setHeight(signatureData.getImageHeight());
-        pdfSignOptions.setWidth(signatureData.getImageWidth());
-        pdfSignOptions.setTop(signatureData.getTop());
-        pdfSignOptions.setLeft(signatureData.getLeft());
-        pdfSignOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        pdfSignOptions.setRotationAngle(signatureData.getAngle());
-        pdfSignOptions.setBackgroundColor(getColor(stampData.get(stampData.size() - 1).getBackgroundColor()));
-        pdfSignOptions.setBackgroundColorCropType(StampBackgroundCropType.OuterArea);
-        // draw stamp lines
-        fillStamp(pdfSignOptions.getInnerLines(), pdfSignOptions.getOuterLines());
-        return pdfSignOptions;
+        PdfStampSignOptions signOptions = new PdfStampSignOptions();
+        fillStampOptions(signOptions);
+        return signOptions;
+    }
+
+    private void fillStampOptions(StampSignOptions signOptions) {
+        signOptions.setHeight(signatureData.getImageHeight());
+        signOptions.setWidth(signatureData.getImageWidth());
+        signOptions.setTop(signatureData.getTop());
+        signOptions.setLeft(signatureData.getLeft());
+        signOptions.setDocumentPageNumber(signatureData.getPageNumber());
+        signOptions.setRotationAngle(signatureData.getAngle());
+        signOptions.setBackgroundColor(getColor(stampData.get(stampData.size() - 1).getBackgroundColor()));
+        signOptions.setBackgroundColorCropType(StampBackgroundCropType.OuterArea);
+        fillStamp(signOptions.getInnerLines(), signOptions.getOuterLines());
     }
 
     /**
      * Add stamp signature data to image sign options
+     *
      * @return ImageStampSignOptions
      */
     @Override
-    public ImagesStampSignOptions signImage(){
+    public ImagesStampSignOptions signImage() {
         // setup options
-        ImagesStampSignOptions imageSignOptions = new ImagesStampSignOptions();
-        imageSignOptions.setHeight(signatureData.getImageHeight());
-        imageSignOptions.setWidth(signatureData.getImageWidth());
-        imageSignOptions.setTop(signatureData.getTop());
-        imageSignOptions.setLeft(signatureData.getLeft());
-        imageSignOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        imageSignOptions.setRotationAngle(signatureData.getAngle());
-        imageSignOptions.setBackgroundColor(getColor(stampData.get(stampData.size() - 1).getBackgroundColor()));
-        imageSignOptions.setBackgroundColorCropType(StampBackgroundCropType.OuterArea);
-        fillStamp(imageSignOptions.getInnerLines(), imageSignOptions.getOuterLines());
-        return imageSignOptions;
+        ImagesStampSignOptions signOptions = new ImagesStampSignOptions();
+        fillStampOptions(signOptions);
+        return signOptions;
     }
 
     /**
      * Add stamp signature data to words sign options
+     *
      * @return WordsStampSignOptions
      */
     @Override
-    public WordsStampSignOptions signWord(){
+    public WordsStampSignOptions signWord() {
         // setup options
-        WordsStampSignOptions wordsSignOptions = new WordsStampSignOptions();
-        wordsSignOptions.setHeight(signatureData.getImageHeight());
-        wordsSignOptions.setWidth(signatureData.getImageWidth());
-        wordsSignOptions.setTop(signatureData.getTop());
-        wordsSignOptions.setLeft(signatureData.getLeft());
-        wordsSignOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        wordsSignOptions.setRotationAngle(signatureData.getAngle());
-        wordsSignOptions.setBackgroundColor(getColor(stampData.get(stampData.size() - 1).getBackgroundColor()));
-        wordsSignOptions.setBackgroundColorCropType(StampBackgroundCropType.OuterArea);
-        fillStamp(wordsSignOptions.getInnerLines(), wordsSignOptions.getOuterLines());
-        return wordsSignOptions;
+        WordsStampSignOptions signOptions = new WordsStampSignOptions();
+        fillStampOptions(signOptions);
+        return signOptions;
     }
 
     /**
      * Add stamp signature data to cells sign options
+     *
      * @return CellsStampSignOptions
      */
     @Override
-    public CellsStampSignOptions signCells(){
+    public CellsStampSignOptions signCells() {
         // setup options
-        CellsStampSignOptions cellsSignOptions = new CellsStampSignOptions();
-        cellsSignOptions.setHeight(signatureData.getImageHeight());
-        cellsSignOptions.setWidth(signatureData.getImageWidth());
-        cellsSignOptions.setTop(signatureData.getTop());
-        cellsSignOptions.setLeft(signatureData.getLeft());
-        cellsSignOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        cellsSignOptions.setRotationAngle(signatureData.getAngle());
-        cellsSignOptions.setBackgroundColor(getColor(stampData.get(stampData.size() - 1).getBackgroundColor()));
-        cellsSignOptions.setBackgroundColorCropType(StampBackgroundCropType.OuterArea);
-        fillStamp(cellsSignOptions.getInnerLines(), cellsSignOptions.getOuterLines());
-        return cellsSignOptions;
+        CellsStampSignOptions signOptions = new CellsStampSignOptions();
+        fillStampOptions(signOptions);
+        return signOptions;
     }
 
     /**
      * Add stamp signature data to slides sign options
+     *
      * @return SlidesStampSignOptions
      */
     @Override
-    public SlidesStampSignOptions signSlides(){
+    public SlidesStampSignOptions signSlides() {
         // setup options
-        SlidesStampSignOptions slidesSignOptions = new SlidesStampSignOptions();
-        slidesSignOptions.setHeight(signatureData.getImageHeight());
-        slidesSignOptions.setWidth(signatureData.getImageWidth());
-        slidesSignOptions.setTop(signatureData.getTop());
-        slidesSignOptions.setLeft(signatureData.getLeft());
-        slidesSignOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        slidesSignOptions.setRotationAngle(signatureData.getAngle());
-        slidesSignOptions.setBackgroundColor(getColor(stampData.get(stampData.size() - 1).getBackgroundColor()));
-        slidesSignOptions.setBackgroundColorCropType(StampBackgroundCropType.OuterArea);
-        fillStamp(slidesSignOptions.getInnerLines(), slidesSignOptions.getOuterLines());
-        return slidesSignOptions;
+        SlidesStampSignOptions signOptions = new SlidesStampSignOptions();
+        fillStampOptions(signOptions);
+        return signOptions;
     }
 
     private void fillStamp(List<StampLine> innerLines, List<StampLine> outerLines) {
@@ -156,26 +130,18 @@ public class StampSigner extends Signer{
                 squareLine.setTextColor(getColor(stampData.get(n).getTextColor()));
                 innerLines.add(squareLine);
                 if (stampData.size() == 1) {
-                    StampLine line = new StampLine();
-                    line.setBackgroundColor(getColor(stampData.get(n).getBackgroundColor()));
-                    line.getOuterBorder().setColor(getColor(stampData.get(n).getStrokeColor()));
-                    line.getOuterBorder().setWeight(0.5);
+                    StampLine line = initStampLine(n);
                     line.getInnerBorder().setColor(getColor(stampData.get(n).getBackgroundColor()));
-                    line.getInnerBorder().setWeight(0.5);
                     line.setHeight(1);
                     outerLines.add(line);
                 }
             } else {
                 // draw outer rounded lines
-                int height = (stampData.get(n).getRadius() - stampData.get(n + 1).getRadius()) / reductionSize;
-                StampLine line = new StampLine();
-                line.setBackgroundColor(getColor(stampData.get(n).getBackgroundColor()));
-                line.getOuterBorder().setColor(getColor(stampData.get(n).getStrokeColor()));
-                line.getOuterBorder().setWeight(0.5);
+                StampLine line = initStampLine(n);
                 line.getInnerBorder().setColor(getColor(stampData.get(n + 1).getStrokeColor()));
-                line.getInnerBorder().setWeight(0.5);
-                line.setText(text);
+                int height = (stampData.get(n).getRadius() - stampData.get(n + 1).getRadius()) / reductionSize;
                 line.setHeight(height);
+                line.setText(text);
                 line.getFont().setFontSize(stampData.get(n).getFontSize() / reductionSize);
                 line.setTextColor(getColor(stampData.get(n).getTextColor()));
                 line.setTextBottomIntent((height / 2));
@@ -183,6 +149,15 @@ public class StampSigner extends Signer{
                 outerLines.add(line);
             }
         }
+    }
+
+    private StampLine initStampLine(int n) {
+        StampLine line = new StampLine();
+        line.setBackgroundColor(getColor(stampData.get(n).getBackgroundColor()));
+        line.getOuterBorder().setColor(getColor(stampData.get(n).getStrokeColor()));
+        line.getOuterBorder().setWeight(0.5);
+        line.getInnerBorder().setWeight(0.5);
+        return line;
     }
 
 }

@@ -1,7 +1,7 @@
-package com.groupdocs.ui.signature.model;
+package com.groupdocs.ui.util.directory;
 
-import static com.groupdocs.ui.signature.PathConstants.DATA_PREVIEW_FOLDER;
-import static com.groupdocs.ui.signature.PathConstants.DATA_XML_FOLDER;
+import static com.groupdocs.ui.util.directory.PathConstants.DATA_PREVIEW_FOLDER;
+import static com.groupdocs.ui.util.directory.PathConstants.DATA_XML_FOLDER;
 import static com.groupdocs.ui.signature.SignatureType.*;
 
 public enum SignatureDirectory {
