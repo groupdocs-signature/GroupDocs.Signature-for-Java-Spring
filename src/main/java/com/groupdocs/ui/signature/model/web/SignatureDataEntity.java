@@ -1,5 +1,8 @@
 package com.groupdocs.ui.signature.model.web;
 
+import com.groupdocs.signature.domain.enums.HorizontalAlignment;
+import com.groupdocs.signature.domain.enums.VerticalAlignment;
+
 /**
  * SignatureDataEntity
  *
@@ -20,6 +23,8 @@ public class SignatureDataEntity {
     private int imageHeight;
     private int angle;
     private Boolean deleted;
+    private int horizontalAlignment = HorizontalAlignment.None;
+    private int verticalAlignment = VerticalAlignment.None;
 
     public int getPageNumber() {
         return pageNumber;
@@ -131,5 +136,21 @@ public class SignatureDataEntity {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public int getHorizontalAlignment() {
+        return horizontalAlignment;
+    }
+
+    public void setHorizontalAlignment(int horizontalAlignment) {
+        this.horizontalAlignment = horizontalAlignment;
+    }
+
+    public int getVerticalAlignment() {
+        return verticalAlignment;
+    }
+
+    public void setVerticalAlignment(int verticalAlignment) {
+        this.verticalAlignment = verticalAlignment;
     }
 }

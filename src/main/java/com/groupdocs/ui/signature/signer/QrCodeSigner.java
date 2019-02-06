@@ -1,11 +1,11 @@
 package com.groupdocs.ui.signature.signer;
 
-import com.groupdocs.signature.domain.enums.HorizontalAlignment;
-import com.groupdocs.signature.domain.enums.VerticalAlignment;
 import com.groupdocs.signature.domain.qrcodes.QRCodeTypes;
 import com.groupdocs.signature.options.qrcodesignature.*;
 import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
+
+import java.awt.*;
 
 /**
  * QrCodeSigner
@@ -87,8 +87,9 @@ public class QrCodeSigner extends Signer{
 
     private void fillProperties(QRCodeSignOptions signOptions) {
         signOptions.setEncodeType(QRCodeTypes.QR);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
+        signOptions.setBackgroundColor(Color.WHITE);
+        signOptions.setHorizontalAlignment(signatureData.getHorizontalAlignment());
+        signOptions.setVerticalAlignment(signatureData.getVerticalAlignment());
         signOptions.setWidth(signatureData.getImageWidth());
         signOptions.setHeight(signatureData.getImageHeight());
         signOptions.setTop(signatureData.getTop());

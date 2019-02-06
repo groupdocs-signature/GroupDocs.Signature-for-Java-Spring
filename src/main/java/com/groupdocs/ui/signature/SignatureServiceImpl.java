@@ -3,6 +3,8 @@ package com.groupdocs.ui.signature;
 import com.google.common.collect.Lists;
 import com.groupdocs.signature.config.SignatureConfig;
 import com.groupdocs.signature.domain.DocumentDescription;
+import com.groupdocs.signature.domain.enums.HorizontalAlignment;
+import com.groupdocs.signature.domain.enums.VerticalAlignment;
 import com.groupdocs.signature.handler.SignatureHandler;
 import com.groupdocs.signature.licensing.License;
 import com.groupdocs.signature.options.OutputType;
@@ -265,7 +267,7 @@ public class SignatureServiceImpl implements SignatureService {
         OpticalXmlEntity signatureData = saveOpticalCodeRequest.getProperties();
         String signatureType = saveOpticalCodeRequest.getSignatureType();
         // initiate signature data wrapper with default values
-        SignatureDataEntity signatureDataEntity = getSignatureDataEntity(250, 250);
+        SignatureDataEntity signatureDataEntity = getSignatureDataEntity(200, 270);
         // initiate signer object
         String previewPath;
         String xmlPath;
@@ -618,8 +620,7 @@ public class SignatureServiceImpl implements SignatureService {
         if (!sortedSignaturesData.codes.isEmpty()) {
             signOptical(documentType, sortedSignaturesData.codes, signsCollection);
         }
-        signDocument(documentGuid, signDocumentRequest.getPassword(), signsCollection);
-        return new SignedDocumentEntity();
+        return signDocument(documentGuid, signDocumentRequest.getPassword(), signsCollection);
     }
 
     /**
@@ -740,6 +741,8 @@ public class SignatureServiceImpl implements SignatureService {
      */
     private SignatureDataEntity getSignatureDataEntity(int height, int width) {
         SignatureDataEntity signatureDataEntity = new SignatureDataEntity();
+        signatureDataEntity.setHorizontalAlignment(HorizontalAlignment.Center);
+        signatureDataEntity.setVerticalAlignment(VerticalAlignment.Center);
         signatureDataEntity.setImageHeight(height);
         signatureDataEntity.setImageWidth(width);
         signatureDataEntity.setLeft(0);
