@@ -43,8 +43,8 @@ public class StampSigner extends Signer {
     }
 
     private void fillStampOptions(StampSignOptions signOptions) {
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setWidth(signatureData.getImageWidth());
+        signOptions.setHeight(signatureData.getImageHeight() - 20);
+        signOptions.setWidth(signatureData.getImageWidth() - 20);
         signOptions.setTop(signatureData.getTop());
         signOptions.setLeft(signatureData.getLeft());
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
@@ -107,48 +107,56 @@ public class StampSigner extends Signer {
     }
 
     private void fillStamp(List<StampLine> innerLines, List<StampLine> outerLines) {
-        for (int n = 0; n < stampData.size(); n++) {
+        for (int i = 0; i < stampData.size(); i++) {
+            StampXmlEntity stampXmlEntity = stampData.get(i);
             String text = "";
-            for (int m = 0; m < stampData.get(n).getTextRepeat(); m++) {
-                text = text + stampData.get(n).getText();
+            for (int j = 0; j < stampXmlEntity.getTextRepeat(); j++) {
+                text = text + stampXmlEntity.getText();
             }
             // set reduction size - required to recalculate each stamp line height and font size after stamp resizing in the UI
             int reductionSize = 0;
             // check if reduction size is between 1 and 2. for example: 1.25
-            if ((double) stampData.get(n).getHeight() / signatureData.getImageHeight() > 1 && (double) stampData.get(n).getHeight() / signatureData.getImageHeight() < 2) {
+            int stampXmlEntityHeight = stampXmlEntity.getHeight();
+            int imageHeight = signatureData.getImageHeight();
+            if ((double) stampXmlEntityHeight / imageHeight > 1 && (double) stampXmlEntityHeight / imageHeight < 2) {
                 reductionSize = 2;
-            } else if (stampData.get(n).getHeight() / signatureData.getImageHeight() == 0) {
+            } else if (stampXmlEntityHeight / imageHeight == 0) {
                 reductionSize = 1;
             } else {
-                reductionSize = stampData.get(n).getHeight() / signatureData.getImageHeight();
+                reductionSize = stampXmlEntityHeight / imageHeight;
             }
-            if ((n + 1) == stampData.size()) {
+            if ((i + 1) == stampData.size()) {
                 // draw inner horizontal line
                 StampLine squareLine = new StampLine();
-                squareLine.setText(text);
-                squareLine.getFont().setFontSize(stampData.get(n).getFontSize() / reductionSize);
-                squareLine.setTextColor(getColor(stampData.get(n).getTextColor()));
+                fillTextAndFont(stampXmlEntity, text, reductionSize, squareLine);
                 innerLines.add(squareLine);
                 if (stampData.size() == 1) {
-                    StampLine line = initStampLine(n);
-                    line.getInnerBorder().setColor(getColor(stampData.get(n).getBackgroundColor()));
+                    StampLine line = initStampLine(i);
+                    line.getInnerBorder().setColor(getColor(stampXmlEntity.getBackgroundColor()));
                     line.setHeight(1);
                     outerLines.add(line);
                 }
             } else {
                 // draw outer rounded lines
-                StampLine line = initStampLine(n);
-                line.getInnerBorder().setColor(getColor(stampData.get(n + 1).getStrokeColor()));
-                int height = (stampData.get(n).getRadius() - stampData.get(n + 1).getRadius()) / reductionSize;
+                StampLine line = initStampLine(i);
+                line.getInnerBorder().setColor(getColor(stampData.get(i + 1).getStrokeColor()));
+                int height = (stampXmlEntity.getRadius() - stampData.get(i + 1).getRadius()) / reductionSize;
                 line.setHeight(height);
-                line.setText(text);
-                line.getFont().setFontSize(stampData.get(n).getFontSize() / reductionSize);
-                line.setTextColor(getColor(stampData.get(n).getTextColor()));
+                fillTextAndFont(stampXmlEntity, text, reductionSize, line);
                 line.setTextBottomIntent((height / 2));
-                line.setTextRepeatType(StampTextRepeatType.RepeatWithTruncation);
+                line.setTextRepeatType(StampTextRepeatType.None);
                 outerLines.add(line);
             }
         }
+    }
+
+    private void fillTextAndFont(StampXmlEntity stampXmlEntity, String text, int reductionSize, StampLine squareLine) {
+        squareLine.setText(text);
+        squareLine.getFont().setFontSize(stampXmlEntity.getFontSize() / reductionSize);
+        squareLine.getFont().setBold(stampXmlEntity.getBold());
+        squareLine.getFont().setItalic(stampXmlEntity.getItalic());
+        squareLine.getFont().setUnderline(stampXmlEntity.getUnderline());
+        squareLine.setTextColor(getColor(stampXmlEntity.getTextColor()));
     }
 
     private StampLine initStampLine(int n) {
