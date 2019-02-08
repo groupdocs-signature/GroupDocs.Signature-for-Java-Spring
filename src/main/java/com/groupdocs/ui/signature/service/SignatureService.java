@@ -1,16 +1,15 @@
-package com.groupdocs.ui.signature;
+package com.groupdocs.ui.signature.service;
 
 import com.groupdocs.ui.model.request.LoadDocumentPageRequest;
 import com.groupdocs.ui.model.request.LoadDocumentRequest;
-import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadDocumentEntity;
 import com.groupdocs.ui.model.response.PageDescriptionEntity;
-import com.groupdocs.ui.signature.model.request.*;
+import com.groupdocs.ui.signature.SignatureConfiguration;
+import com.groupdocs.ui.signature.model.request.DeleteSignatureFileRequest;
+import com.groupdocs.ui.signature.model.request.LoadSignatureImageRequest;
+import com.groupdocs.ui.signature.model.request.SignatureFileTreeRequest;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.model.web.SignaturePageEntity;
-import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
-import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
-import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -52,36 +51,6 @@ public interface SignatureService {
     PageDescriptionEntity loadDocumentPage(LoadDocumentPageRequest loadDocumentPageRequest);
 
     /**
-     * Save stamp signature
-     *
-     * @param saveStampRequest save signature request data
-     * @return signature file description
-     */
-    FileDescriptionEntity saveStamp(SaveStampRequest saveStampRequest);
-
-    /**
-     * Save optical code signature
-     *
-     * @param saveOpticalCodeRequest save signature request data
-     * @return optical code signature
-     */
-    OpticalXmlEntity saveOpticalCode(SaveOpticalCodeRequest saveOpticalCodeRequest);
-
-    /**
-     * Save test signature
-     *
-     * @param saveTextRequest save signature request data
-     * @return text signature
-     */
-    TextXmlEntity saveText(SaveTextRequest saveTextRequest);
-
-    /**
-     * @param saveImageRequest save signature request data
-     * @return signature file description
-     */
-    FileDescriptionEntity saveImage(SaveImageRequest saveImageRequest);
-
-    /**
      * Upload document
      *
      * @param content       document content
@@ -107,12 +76,4 @@ public interface SignatureService {
     List<String> getFonts();
 
     SignaturePageEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest);
-
-    /**
-     * Sign document
-     *
-     * @param signDocumentRequest
-     * @return
-     */
-    SignedDocumentEntity sign(SignDocumentRequest signDocumentRequest);
 }

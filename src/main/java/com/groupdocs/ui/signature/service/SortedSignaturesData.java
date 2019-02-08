@@ -1,4 +1,4 @@
-package com.groupdocs.ui.signature;
+package com.groupdocs.ui.signature.service;
 
 import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 

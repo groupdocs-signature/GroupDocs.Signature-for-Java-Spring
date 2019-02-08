@@ -47,7 +47,7 @@ public abstract class Signer {
      * @return
      * @throws ParseException
      */
-    public abstract SignOptions signImage() throws ParseException;
+    public abstract SignOptions signImage();
 
     /**
      *

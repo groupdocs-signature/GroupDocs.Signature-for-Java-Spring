@@ -14,6 +14,9 @@ import com.groupdocs.ui.signature.model.web.SignaturePageEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
 import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
+import com.groupdocs.ui.signature.service.SaveSignatureService;
+import com.groupdocs.ui.signature.service.SignService;
+import com.groupdocs.ui.signature.service.SignatureService;
 import com.groupdocs.ui.util.Utils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -51,16 +54,20 @@ public class SignatureController {
 
     @Autowired
     private SignatureService signatureService;
+    @Autowired
+    private SaveSignatureService saveSignatureService;
+    @Autowired
+    private SignService signService;
 
     /**
      * Get signature page
      *
      * @param request http request
-     * @param model model data for template
+     * @param model   model data for template
      * @return template name
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String getView(HttpServletRequest request, Map<String, Object> model){
+    public String getView(HttpServletRequest request, Map<String, Object> model) {
         setLocalPort(request, globalConfiguration.getServer());
 
         model.put("globalConfiguration", globalConfiguration);
@@ -99,7 +106,7 @@ public class SignatureController {
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadDocumentPage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public PageDescriptionEntity loadDocumentPage(@RequestBody LoadDocumentPageRequest loadDocumentPageRequest){
+    public PageDescriptionEntity loadDocumentPage(@RequestBody LoadDocumentPageRequest loadDocumentPageRequest) {
         return signatureService.loadDocumentPage(loadDocumentPageRequest);
     }
 
@@ -194,7 +201,7 @@ public class SignatureController {
         if (signaturesData == null || signaturesData.isEmpty()) {
             throw new IllegalArgumentException("Sign data is empty");
         }
-        return signatureService.sign(signDocumentRequest);
+        return signService.sign(signDocumentRequest);
     }
 
     /**
@@ -205,7 +212,7 @@ public class SignatureController {
     @RequestMapping(method = RequestMethod.POST, value = "/saveImage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public FileDescriptionEntity saveImage(@RequestBody SaveImageRequest saveImageRequest) {
-        return signatureService.saveImage(saveImageRequest);
+        return saveSignatureService.saveImage(saveImageRequest);
     }
 
     /**
@@ -216,7 +223,7 @@ public class SignatureController {
     @RequestMapping(method = RequestMethod.POST, value = "/saveStamp", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public FileDescriptionEntity saveStamp(@RequestBody SaveStampRequest saveStampRequest) {
-        return signatureService.saveStamp(saveStampRequest);
+        return saveSignatureService.saveStamp(saveStampRequest);
     }
 
     /**
@@ -227,7 +234,7 @@ public class SignatureController {
     @RequestMapping(method = RequestMethod.POST, value = "/saveOpticalCode", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public OpticalXmlEntity saveOpticalCode(@RequestBody SaveOpticalCodeRequest saveOpticalCodeRequest) {
-        return signatureService.saveOpticalCode(saveOpticalCodeRequest);
+        return saveSignatureService.saveOpticalCode(saveOpticalCodeRequest);
     }
 
     /**
@@ -238,6 +245,6 @@ public class SignatureController {
     @RequestMapping(method = RequestMethod.POST, value = "/saveText", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public TextXmlEntity saveText(@RequestBody SaveTextRequest saveTextRequest) {
-        return signatureService.saveText(saveTextRequest);
+        return saveSignatureService.saveText(saveTextRequest);
     }
 }

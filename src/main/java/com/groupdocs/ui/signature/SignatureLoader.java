@@ -94,19 +94,28 @@ public class SignatureLoader {
             if (images.listFiles() != null) {
                 List<File> imageFiles = Arrays.asList(images.listFiles());
                 List<File> xmlFiles = Arrays.asList(new File(xmlPath).listFiles());
-                List<File> filesList = new ArrayList<>();
-                for (File image : imageFiles) {
-                    for (File xmlFile : xmlFiles) {
-                        if (FilenameUtils.removeExtension(xmlFile.getName()).equals(FilenameUtils.removeExtension(image.getName()))) {
-                            filesList.add(image);
-                        }
-                    }
-                }
+                List<File> filesList = createFilesList(imageFiles, xmlFiles);
                 return getResultFileList(dataPath, filesList, true, signatureType);
             }
             return Collections.EMPTY_LIST;
         } catch (Exception ex) {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
+        }
+    }
+
+    private List<File> createFilesList(List<File> imageFiles, List<File> xmlFiles) {
+        List<File> filesList = new ArrayList<>();
+        for (File image : imageFiles) {
+            findXmlFile(xmlFiles, filesList, image);
+        }
+        return filesList;
+    }
+
+    private void findXmlFile(List<File> xmlFiles, List<File> filesList, File image) {
+        for (File xmlFile : xmlFiles) {
+            if (FilenameUtils.removeExtension(xmlFile.getName()).equals(FilenameUtils.removeExtension(image.getName()))) {
+                filesList.add(image);
+            }
         }
     }
 
