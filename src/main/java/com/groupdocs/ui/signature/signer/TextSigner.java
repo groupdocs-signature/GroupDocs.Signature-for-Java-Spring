@@ -86,13 +86,15 @@ public class TextSigner extends Signer{
         // setup text color
         signOptions.setForeColor(getColor(textData.getFontColor()));
         // setup Font options
-        signOptions.getFont().setBold(textData.getBold());
-        signOptions.getFont().setItalic(textData.getItalic());
-        signOptions.getFont().setUnderline(textData.getUnderline());
-        signOptions.getFont().setFontFamily(textData.getFont());
-        // set reduction size - required to recalculate font size after signature resizing in the UI
-        int reductionSize = getReductionSize(imageHeight);
-        signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
+        if (signOptions.getFont() != null) {
+            signOptions.getFont().setBold(textData.getBold());
+            signOptions.getFont().setItalic(textData.getItalic());
+            signOptions.getFont().setUnderline(textData.getUnderline());
+            signOptions.getFont().setFontFamily(textData.getFont());
+            // set reduction size - required to recalculate font size after signature resizing in the UI
+            int reductionSize = getReductionSize(imageHeight);
+            signOptions.getFont().setFontSize(textData.getFontSize() / reductionSize);
+        }
     }
 
     /**

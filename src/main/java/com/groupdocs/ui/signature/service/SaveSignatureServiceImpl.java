@@ -100,7 +100,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
     public OpticalXmlEntity saveOpticalCode(SaveOpticalCodeRequest saveOpticalCodeRequest) {
         OpticalXmlEntity signatureData = saveOpticalCodeRequest.getProperties();
         // initiate signature data wrapper with default values
-        SignatureDataEntity signatureDataEntity = getSignatureDataEntity(200, 270);
+        SignatureDataEntity signatureDataEntity = getSignatureDataEntity(270, 200);
 
         // initiate signature options collection
         SignatureOptionsCollection collection = new SignatureOptionsCollection();
@@ -286,11 +286,11 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
     /**
      * Get filled signature data
      *
-     * @param height
      * @param width
+     * @param height
      * @return
      */
-    private SignatureDataEntity getSignatureDataEntity(int height, int width) {
+    private SignatureDataEntity getSignatureDataEntity(int width, int height) {
         SignatureDataEntity signatureDataEntity = new SignatureDataEntity();
         signatureDataEntity.setHorizontalAlignment(HorizontalAlignment.Center);
         signatureDataEntity.setVerticalAlignment(VerticalAlignment.Center);

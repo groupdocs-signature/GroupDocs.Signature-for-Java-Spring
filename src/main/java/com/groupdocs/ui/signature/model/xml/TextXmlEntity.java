@@ -16,9 +16,9 @@ public class TextXmlEntity extends XmlEntityWithImage {
     private String fontColor = "rgb(0,0,0)";
     private String font;
     private int fontSize;
-    private Boolean bold;
-    private Boolean italic;
-    private Boolean underline;
+    private boolean bold;
+    private boolean italic;
+    private boolean underline;
 
     public String getBackgroundColor() {
         return backgroundColor;
@@ -52,27 +52,27 @@ public class TextXmlEntity extends XmlEntityWithImage {
         this.fontSize = fontSize;
     }
 
-    public Boolean getBold() {
+    public boolean getBold() {
         return bold;
     }
 
-    public void setBold(Boolean bold) {
+    public void setBold(boolean bold) {
         this.bold = bold;
     }
 
-    public Boolean getItalic() {
+    public boolean getItalic() {
         return italic;
     }
 
-    public void setItalic(Boolean italic) {
+    public void setItalic(boolean italic) {
         this.italic = italic;
     }
 
-    public Boolean getUnderline() {
+    public boolean getUnderline() {
         return underline;
     }
 
-    public void setUnderline(Boolean underline) {
+    public void setUnderline(boolean underline) {
         this.underline = underline;
     }
 }

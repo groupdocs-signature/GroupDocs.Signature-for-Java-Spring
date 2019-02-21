@@ -198,6 +198,7 @@ public class SignatureLoader {
             if (TEXT.equals(loadSignatureImageRequest.getSignatureType())) {
                 String fileName = getXmlFilePath(file);
                 TextXmlEntity textXmlEntity = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
+                textXmlEntity.setImageGuid(loadSignatureImageRequest.getGuid());
                 loadedPage.setProps(textXmlEntity);
             }
             // return loaded page object

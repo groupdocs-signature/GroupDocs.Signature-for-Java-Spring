@@ -290,7 +290,7 @@ public class Utils {
      * @return created file
      */
     public static File getFileWithUniqueName(String previewPath, String imageGuid) {
-        if (!StringUtils.isEmpty(imageGuid) && !new File(imageGuid).exists()) {
+        if (!StringUtils.isEmpty(imageGuid) && new File(imageGuid).exists()) {
             return new File(imageGuid);
         } else {
             File[] listOfFiles = new File(previewPath).listFiles();
