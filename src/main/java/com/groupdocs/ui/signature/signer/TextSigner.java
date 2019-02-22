@@ -15,27 +15,30 @@ import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
 /**
  * TextSigner
  * Signs documents with the text signature
+ *
  * @author Aspose Pty Ltd
  */
-public class TextSigner extends Signer{
+public class TextSigner extends Signer {
     private TextXmlEntity textData;
 
     /**
      * Constructor
+     *
      * @param textData
      * @param signatureData
      */
-    public TextSigner(TextXmlEntity textData, SignatureDataEntity signatureData){
+    public TextSigner(TextXmlEntity textData, SignatureDataEntity signatureData) {
         super(signatureData);
         this.textData = textData;
     }
 
     /**
      * Add text signature data to pdf sign options
+     *
      * @return PdfSignTextOptions
      */
     @Override
-    public PdfSignTextOptions signPdf(){
+    public PdfSignTextOptions signPdf() {
         PdfSignTextOptions signOptions = new PdfSignTextOptions(textData.getText());
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
         fillTextOptions(signOptions);
@@ -61,10 +64,11 @@ public class TextSigner extends Signer{
 
     /**
      * Add text signature data to image sign options
+     *
      * @return ImagesSignTextOptions
      */
     @Override
-    public ImagesSignTextOptions signImage(){
+    public ImagesSignTextOptions signImage() {
         ImagesSignTextOptions signOptions = new ImagesSignTextOptions(textData.getText());
         fillTextOptions(signOptions);
         //type of implementation
@@ -99,10 +103,11 @@ public class TextSigner extends Signer{
 
     /**
      * Add text signature data to words sign options
+     *
      * @return WordsSignTextOptions
      */
     @Override
-    public WordsSignTextOptions signWord(){
+    public WordsSignTextOptions signWord() {
         WordsSignTextOptions signOptions = new WordsSignTextOptions(textData.getText());
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
         fillTextOptions(signOptions);
@@ -112,10 +117,11 @@ public class TextSigner extends Signer{
 
     /**
      * Add text signature data to cells sign options
+     *
      * @return CellsSignTextOptions
      */
     @Override
-    public CellsSignTextOptions signCells(){
+    public CellsSignTextOptions signCells() {
         CellsSignTextOptions signOptions = new CellsSignTextOptions(textData.getText());
         signOptions.setSheetNumber(signatureData.getPageNumber());
         fillTextOptions(signOptions);
@@ -127,10 +133,11 @@ public class TextSigner extends Signer{
 
     /**
      * Add text signature data to slides sign options
+     *
      * @return SlidesSignTextOptions
      */
     @Override
-    public SlidesSignTextOptions signSlides(){
+    public SlidesSignTextOptions signSlides() {
         SlidesSignTextOptions signOptions = new SlidesSignTextOptions(textData.getText());
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
         fillTextOptions(signOptions);
