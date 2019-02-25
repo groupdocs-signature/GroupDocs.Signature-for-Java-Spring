@@ -10,6 +10,15 @@ import com.groupdocs.ui.model.response.FileDescriptionEntity;
 public class SignatureFileDescriptionEntity extends FileDescriptionEntity {
     private String image;
     private String text;
+    private String fontColor;
+
+    public String getFontColor() {
+        return fontColor;
+    }
+
+    public void setFontColor(String fontColor) {
+        this.fontColor = fontColor;
+    }
 
     public String getText() {
         return text;
