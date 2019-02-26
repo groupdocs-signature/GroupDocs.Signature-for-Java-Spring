@@ -82,6 +82,23 @@ public class SignatureLoader {
     }
 
     /**
+     * load text signatures
+     *
+     * @param currentPath
+     * @param dataPath
+     * @return
+     */
+    public List<SignatureFileDescriptionEntity> loadTextSignatures(String currentPath, String dataPath) {
+        String xmlPath = currentPath + DATA_XML_FOLDER;
+        try {
+            List<File> filesList = Arrays.asList(new File(xmlPath).listFiles());
+            return getResultFileList(dataPath, filesList, false, TEXT);
+        } catch (Exception ex) {
+            throw new TotalGroupDocsException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Load stamp signatures
      *
      * @return List<SignatureFileDescriptionEntity>

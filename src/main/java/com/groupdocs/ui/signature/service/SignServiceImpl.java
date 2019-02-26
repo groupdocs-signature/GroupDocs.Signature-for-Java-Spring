@@ -198,14 +198,12 @@ public class SignServiceImpl implements SignService {
      * @return
      */
     private void signText(String documentType, List<SignatureDataEntity> texts, SignatureOptionsCollection signsCollection) {
-        String xmlPath = getFullDataPath(signatureConfiguration.getDataDirectory(), TEXT_DATA_DIRECTORY.getXMLPath());
         try {
             // prepare signing options and sign document
             for (int i = 0; i < texts.size(); i++) {
                 SignatureDataEntity signatureDataEntity = texts.get(i);
                 // get xml data of the signature
-                String fileName = getXMLFileName(xmlPath, signatureDataEntity.getSignatureGuid());
-                TextXmlEntity textData = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
+                TextXmlEntity textData = new XMLReaderWriter<TextXmlEntity>().read(signatureDataEntity.getSignatureGuid(), TextXmlEntity.class);
                 // initiate QRCode signer object
                 TextSigner signer = new TextSigner(textData, signatureDataEntity);
                 // prepare signing options and sign document

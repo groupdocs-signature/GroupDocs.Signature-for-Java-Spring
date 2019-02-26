@@ -157,28 +157,18 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
      */
     @Override
     public TextXmlEntity saveText(SaveTextRequest saveTextRequest) {
-        String previewPath = getFullDataPath(signatureConfiguration.getDataDirectory(), TEXT_DATA_DIRECTORY.getPreviewPath());
         String xmlPath = getFullDataPath(signatureConfiguration.getDataDirectory(), TEXT_DATA_DIRECTORY.getXMLPath());
         TextXmlEntity signatureData = saveTextRequest.getProperties();
-        // initiate signature data wrapper with default values
-        SignatureDataEntity signatureDataEntity = getSignatureDataEntity(signatureData.getWidth(), signatureData.getHeight());
-        File file = writeImageFile(signatureData.getImageGuid(), previewPath, signatureDataEntity.getImageWidth(), signatureDataEntity.getImageHeight());
         try {
-            String fileName = FilenameUtils.removeExtension(file.getName());
+            File file = getFileWithUniqueName(xmlPath, signatureData.getImageGuid());
             // Save data to xml file
-            new XMLReaderWriter<TextXmlEntity>().write(String.format("%s%s%s.xml", xmlPath, File.separator, fileName), signatureData);
+            String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, FilenameUtils.removeExtension(file.getName()));
+            new XMLReaderWriter<TextXmlEntity>().write(fileName, signatureData);
+            signatureData.setImageGuid(fileName);
         } catch (JAXBException e) {
             logger.error("Exception occurred while saving text signature", e);
             throw new TotalGroupDocsException(e.getMessage(), e);
         }
-        // initiate signer object
-        TextSigner textSigner = new TextSigner(signatureData, signatureDataEntity);
-        // initiate signature options collection
-        SignatureOptionsCollection collection = new SignatureOptionsCollection();
-        // generate unique file names for preview image and xml file
-        collection.add(textSigner.signImage());
-        String encodedImage = signWithImageToFile(previewPath, signatureData, collection, file.toPath().toString());
-        signatureData.setEncodedImage(encodedImage);
         return signatureData;
     }
 

@@ -58,6 +58,5 @@ public class SignatureHandlerFactory {
         new File(getFullDataPath(dataDirectory, BARCODE_DATA_DIRECTORY.getPreviewPath())).mkdirs();
 
         new File(getFullDataPath(dataDirectory, TEXT_DATA_DIRECTORY.getXMLPath())).mkdirs();
-        new File(getFullDataPath(dataDirectory, TEXT_DATA_DIRECTORY.getPreviewPath())).mkdirs();
     }
 }
