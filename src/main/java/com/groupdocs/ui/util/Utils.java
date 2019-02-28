@@ -289,20 +289,20 @@ public class Utils {
      * @param imageGuid   path to file
      * @return created file
      */
-    public static File getFileWithUniqueName(String previewPath, String imageGuid) {
+    public static File getFileWithUniqueName(String previewPath, String imageGuid, String ext) {
         if (!StringUtils.isEmpty(imageGuid) && new File(imageGuid).exists()) {
             return new File(imageGuid);
         } else {
             File[] listOfFiles = new File(previewPath).listFiles();
-            return createUniqueFile(previewPath, listOfFiles);
+            return createUniqueFile(previewPath, listOfFiles, ext);
         }
     }
 
-    private static File createUniqueFile(String previewPath, File[] listOfFiles) {
+    private static File createUniqueFile(String previewPath, File[] listOfFiles, String ext) {
         for (int i = 0; i <= listOfFiles.length; i++) {
             // set file name, for example 001
             String fileName = String.format("%03d", i + 1);
-            File file = new File(String.format("%s%s%s.png", previewPath, File.separator, fileName));
+            File file = new File(String.format("%s%s%s.%s", previewPath, File.separator, fileName, ext));
             // check if file with such name already exists
             if (file.exists()) {
                 continue;

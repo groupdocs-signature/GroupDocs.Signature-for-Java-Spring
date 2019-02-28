@@ -51,6 +51,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
     private static final Logger logger = LoggerFactory.getLogger(SaveSignatureServiceImpl.class);
 
     public static final String PNG = "png";
+    public static final String XML = "xml";
 
     private SignatureHandler signatureHandler;
     @Autowired
@@ -73,7 +74,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
             String encodedImage = saveStampRequest.getImage().replace("data:image/png;base64,", "");
             List<StampXmlEntity> stampData = saveStampRequest.getStampData();
 
-            File file = getFileWithUniqueName(previewPath, "");
+            File file = getFileWithUniqueName(previewPath, "", PNG);
             byte[] decodedImg = Base64.getDecoder().decode(encodedImage.getBytes(StandardCharsets.UTF_8));
             Files.write(file.toPath(), decodedImg);
             // stamp data to xml file saving
@@ -160,7 +161,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
         String xmlPath = getFullDataPath(signatureConfiguration.getDataDirectory(), TEXT_DATA_DIRECTORY.getXMLPath());
         TextXmlEntity signatureData = saveTextRequest.getProperties();
         try {
-            File file = getFileWithUniqueName(xmlPath, signatureData.getImageGuid());
+            File file = getFileWithUniqueName(xmlPath, signatureData.getImageGuid(), XML);
             // Save data to xml file
             String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, FilenameUtils.removeExtension(file.getName()));
             new XMLReaderWriter<TextXmlEntity>().write(fileName, signatureData);
@@ -179,7 +180,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
     public FileDescriptionEntity saveImage(SaveImageRequest saveImageRequest) {
         try {
             String dataDirectoryPath = getFullDataPath(signatureConfiguration.getDataDirectory(), IMAGE_DATA_DIRECTORY.getPath());
-            File file = getFileWithUniqueName(dataDirectoryPath, "");
+            File file = getFileWithUniqueName(dataDirectoryPath, "", PNG);
             String encodedImage = saveImageRequest.getImage().replace("data:image/png;base64,", "");
             byte[] decodedImg = Base64.getDecoder().decode(encodedImage.getBytes(StandardCharsets.UTF_8));
             Files.write(file.toPath(), decodedImg);
@@ -202,7 +203,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
      * @return
      */
     private File writeImageFile(String imageGuid, String previewPath, int width, int height) {
-        File file = getFileWithUniqueName(previewPath, imageGuid);
+        File file = getFileWithUniqueName(previewPath, imageGuid, PNG);
         try {
             BufferedImage bufImage = getBufferedImage(width, height);
             // save BufferedImage to file
