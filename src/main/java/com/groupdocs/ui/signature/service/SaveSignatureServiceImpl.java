@@ -20,7 +20,6 @@ import com.groupdocs.ui.signature.model.xml.*;
 import com.groupdocs.ui.signature.signer.BarCodeSigner;
 import com.groupdocs.ui.signature.signer.QrCodeSigner;
 import com.groupdocs.ui.signature.signer.Signer;
-import com.groupdocs.ui.signature.signer.TextSigner;
 import com.groupdocs.ui.util.directory.SignatureDirectory;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -40,10 +39,10 @@ import java.util.Base64;
 import java.util.List;
 
 import static com.groupdocs.ui.signature.SignatureType.QR_CODE;
+import static com.groupdocs.ui.signature.service.SignatureHandlerFactory.createStreamHandler;
 import static com.groupdocs.ui.signature.service.SignatureHandlerFactory.getFullDataPath;
 import static com.groupdocs.ui.util.Utils.getBufferedImage;
 import static com.groupdocs.ui.util.Utils.getFileWithUniqueName;
-import static com.groupdocs.ui.util.directory.PathConstants.OUTPUT_FOLDER;
 import static com.groupdocs.ui.util.directory.SignatureDirectory.*;
 
 @Service
@@ -227,9 +226,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
             final SaveOptions saveOptions = new SaveOptions();
             saveOptions.setOutputType(OutputType.Stream);
             // sign generated image with signature
-            SignatureConfig config = new SignatureConfig();
-            config.setOutputPath(FileSystems.getDefault().getPath("").toAbsolutePath().toString());
-            SignatureHandler<OutputStream> imgSignatureHandler = new SignatureHandler<>(config);
+            SignatureHandler<OutputStream> imgSignatureHandler = createStreamHandler();
             ByteArrayOutputStream bos = (ByteArrayOutputStream) imgSignatureHandler.sign(inputStream, collection, saveOptions);
             byte[] bytes = bos.toByteArray();
             // encode ByteArray into String
@@ -260,8 +257,6 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
             signatureHandler.getSignatureConfig().setOutputPath(previewPath);
             // sign generated image with signature
             signatureHandler.sign(path, collection, saveOptions);
-            // set signed documents path back to correct path
-            signatureHandler.getSignatureConfig().setOutputPath(getFullDataPath(signatureConfiguration.getDataDirectory(), OUTPUT_FOLDER));
             // set data for response
             signatureData.setImageGuid(path);
             // get signature preview as Base64 String

@@ -32,13 +32,11 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import static com.groupdocs.ui.util.directory.PathConstants.OUTPUT_FOLDER;
 import static com.groupdocs.ui.util.Utils.setLocalPort;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
@@ -129,20 +127,14 @@ public class SignatureController {
      */
     @RequestMapping(method = RequestMethod.GET, value = "/downloadDocument")
     public void downloadDocument(@RequestParam(name = "path") String documentGuid,
-                                 @RequestParam(name = "signed") Boolean signed,
                                  HttpServletResponse response) {
         // get document path
         String fileName = FilenameUtils.getName(documentGuid);
-        // choose directory
-        SignatureConfiguration signatureConfiguration = signatureService.getSignatureConfiguration();
-        String filesDirectory = signed ? signatureConfiguration.getDataDirectory() + OUTPUT_FOLDER : signatureConfiguration.getFilesDirectory();
-        String pathToDownload = String.format("%s%s%s", filesDirectory, File.separator, fileName);
-
         // set response content info
         Utils.addFileDownloadHeaders(response, fileName, null);
 
         long length;
-        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(pathToDownload));
+        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(documentGuid));
              ServletOutputStream outputStream = response.getOutputStream()) {
             // download the document
             length = IOUtils.copyLarge(inputStream, outputStream);
@@ -202,6 +194,37 @@ public class SignatureController {
             throw new IllegalArgumentException("Sign data is empty");
         }
         return signService.sign(signDocumentRequest);
+    }
+
+    /**
+     * Sign document with signatures and download result without saving
+     *
+     * @return signed document info
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/downloadSigned", consumes = APPLICATION_JSON_VALUE)
+    public void downloadSigned(@RequestBody SignDocumentRequest signDocumentRequest, HttpServletResponse response) {
+        List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
+        if (signaturesData == null || signaturesData.isEmpty()) {
+            throw new IllegalArgumentException("Sign data is empty");
+        }
+
+        // get document path
+        String documentGuid = signDocumentRequest.getGuid();
+        String fileName = FilenameUtils.getName(documentGuid);
+        // set response content info
+        Utils.addFileDownloadHeaders(response, fileName, null);
+
+        long length;
+        try (InputStream inputStream = signService.signByStream(signDocumentRequest);
+             ServletOutputStream outputStream = response.getOutputStream()) {
+            // download the document
+            length = IOUtils.copyLarge(inputStream, outputStream);
+        } catch (Exception ex) {
+            logger.error("Exception in downloading document", ex);
+            throw new TotalGroupDocsException(ex.getMessage(), ex);
+        }
+
+        Utils.addFileDownloadLengthHeader(response, length);
     }
 
     /**
