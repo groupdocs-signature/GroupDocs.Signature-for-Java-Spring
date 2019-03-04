@@ -40,6 +40,7 @@ public class SignatureHandlerFactory {
     }
 
     /**
+     * Create instance of SignatureHandler for streams
      *
      * @return
      */

@@ -24,8 +24,7 @@ public class SortedSignaturesData {
 
     public SortedSignaturesData sort() {
         for (int i = 0; i < signaturesData.size(); i++) {
-            SignatureDataEntity signatureDataEntity = signaturesData.get(i);
-            addToList(signatureDataEntity);
+            addToList(signaturesData.get(i));
         }
         return this;
     }
