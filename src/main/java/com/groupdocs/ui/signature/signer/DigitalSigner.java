@@ -12,23 +12,26 @@ import java.text.SimpleDateFormat;
 /**
  * DigitalSigner
  * Signs documents with the digital signature
+ *
  * @author Aspose Pty Ltd
  */
-public class DigitalSigner extends Signer{
+public class DigitalSigner extends Signer {
     private String password;
 
     /**
      * Constructor
+     *
      * @param signatureData
      * @param password
      */
-    public DigitalSigner(SignatureDataEntity signatureData, String password){
+    public DigitalSigner(SignatureDataEntity signatureData, String password) {
         super(signatureData);
         this.password = password;
     }
 
     /**
      * Add digital signature data to pdf sign options
+     *
      * @return PdfSignDigitalOptions
      */
     @Override
@@ -42,7 +45,7 @@ public class DigitalSigner extends Signer{
         pdfSignOptions.setLocation(signatureData.getAddress());
         pdfSignOptions.setPassword(password);
         pdfSignOptions.setSignAllPages(true);
-        if(signatureData.getDate() != null && !signatureData.getDate().isEmpty()) {
+        if (signatureData.getDate() != null && !signatureData.getDate().isEmpty()) {
             pdfSignOptions.getSignature().setSignTime(formatter.parse(signatureData.getDate()));
         }
         return pdfSignOptions;
@@ -52,12 +55,13 @@ public class DigitalSigner extends Signer{
      * Sign image with digital signature currently not supported
      */
     @Override
-    public SignOptions signImage() throws IllegalStateException  {
+    public SignOptions signImage() throws IllegalStateException {
         throw new IllegalStateException("This file type is not supported");
     }
 
     /**
      * Add digital signature data to words sign options
+     *
      * @return WordsSignDigitalOptions
      */
     @Override
@@ -66,8 +70,7 @@ public class DigitalSigner extends Signer{
         SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yy");
         // setup digital signature options
         WordsSignDigitalOptions wordsSignOptions = new WordsSignDigitalOptions(signatureData.getSignatureGuid());
-        wordsSignOptions.getSignature().setComments(signatureData.getSignatureComment());
-        if(signatureData.getDate() != null && !signatureData.getDate().isEmpty()) {
+        if (signatureData.getDate() != null && !signatureData.getDate().isEmpty()) {
             wordsSignOptions.getSignature().setSignTime(formatter.parse(signatureData.getDate()));
         }
         wordsSignOptions.setPassword(password);
@@ -77,6 +80,7 @@ public class DigitalSigner extends Signer{
 
     /**
      * Add digital signature data to cells sign options
+     *
      * @return CellsSignDigitalOptions
      */
     @Override
@@ -84,8 +88,7 @@ public class DigitalSigner extends Signer{
         // initiate date formatter
         SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yy");
         CellsSignDigitalOptions cellsSignOptions = new CellsSignDigitalOptions(signatureData.getSignatureGuid());
-        cellsSignOptions.getSignature().setComments(signatureData.getSignatureComment());
-        if(signatureData.getDate() != null && !signatureData.getDate().isEmpty()) {
+        if (signatureData.getDate() != null && !signatureData.getDate().isEmpty()) {
             cellsSignOptions.getSignature().setSignTime(formatter.parse(signatureData.getDate()));
         }
         cellsSignOptions.setPassword(password);
@@ -95,6 +98,7 @@ public class DigitalSigner extends Signer{
 
     /**
      * Sign slides with digital signature currently not supported
+     *
      * @throws IllegalStateException
      */
     @Override

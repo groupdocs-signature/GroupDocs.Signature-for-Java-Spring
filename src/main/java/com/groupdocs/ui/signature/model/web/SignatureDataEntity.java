@@ -1,5 +1,8 @@
 package com.groupdocs.ui.signature.model.web;
 
+import com.groupdocs.signature.domain.enums.HorizontalAlignment;
+import com.groupdocs.signature.domain.enums.VerticalAlignment;
+
 /**
  * SignatureDataEntity
  *
@@ -11,8 +14,6 @@ public class SignatureDataEntity {
     private String  address;
     private String  date;
     private String  signaturePassword;
-    private String  signatureComment;
-    private String documentType;
     private String signatureGuid;
     private String signatureType;
     private int pageNumber;
@@ -21,7 +22,8 @@ public class SignatureDataEntity {
     private int imageWidth;
     private int imageHeight;
     private int angle;
-    private Boolean deleted;
+    private int horizontalAlignment = HorizontalAlignment.None;
+    private int verticalAlignment = VerticalAlignment.None;
 
     public int getPageNumber() {
         return pageNumber;
@@ -69,22 +71,6 @@ public class SignatureDataEntity {
 
     public void setSignaturePassword(String signaturePassword) {
         this.signaturePassword = signaturePassword;
-    }
-
-    public String getSignatureComment() {
-        return signatureComment;
-    }
-
-    public void setSignatureComment(String signatureComment) {
-        this.signatureComment = signatureComment;
-    }
-
-    public String getDocumentType() {
-        return documentType;
-    }
-
-    public void setDocumentType(String documentType) {
-        this.documentType = documentType;
     }
 
     public String getSignatureType() {
@@ -143,11 +129,19 @@ public class SignatureDataEntity {
         this.signatureGuid = signatureGuid;
     }
 
-    public Boolean getDeleted() {
-        return deleted;
+    public int getHorizontalAlignment() {
+        return horizontalAlignment;
     }
 
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
+    public void setHorizontalAlignment(int horizontalAlignment) {
+        this.horizontalAlignment = horizontalAlignment;
+    }
+
+    public int getVerticalAlignment() {
+        return verticalAlignment;
+    }
+
+    public void setVerticalAlignment(int verticalAlignment) {
+        this.verticalAlignment = verticalAlignment;
     }
 }

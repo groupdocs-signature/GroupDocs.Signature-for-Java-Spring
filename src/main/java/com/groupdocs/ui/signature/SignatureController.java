@@ -8,10 +8,15 @@ import com.groupdocs.ui.model.response.FileDescriptionEntity;
 import com.groupdocs.ui.model.response.LoadDocumentEntity;
 import com.groupdocs.ui.model.response.PageDescriptionEntity;
 import com.groupdocs.ui.signature.model.request.*;
+import com.groupdocs.ui.signature.model.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.model.web.SignatureFileDescriptionEntity;
+import com.groupdocs.ui.signature.model.web.SignaturePageEntity;
 import com.groupdocs.ui.signature.model.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.model.xml.OpticalXmlEntity;
 import com.groupdocs.ui.signature.model.xml.TextXmlEntity;
+import com.groupdocs.ui.signature.service.SaveSignatureService;
+import com.groupdocs.ui.signature.service.SignService;
+import com.groupdocs.ui.signature.service.SignatureService;
 import com.groupdocs.ui.util.Utils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -27,14 +32,11 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import static com.groupdocs.ui.signature.PathConstants.OUTPUT_FOLDER;
-import static com.groupdocs.ui.util.Utils.getStringFromStream;
 import static com.groupdocs.ui.util.Utils.setLocalPort;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
@@ -50,16 +52,20 @@ public class SignatureController {
 
     @Autowired
     private SignatureService signatureService;
+    @Autowired
+    private SaveSignatureService saveSignatureService;
+    @Autowired
+    private SignService signService;
 
     /**
      * Get signature page
      *
      * @param request http request
-     * @param model model data for template
+     * @param model   model data for template
      * @return template name
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String getView(HttpServletRequest request, Map<String, Object> model){
+    public String getView(HttpServletRequest request, Map<String, Object> model) {
         setLocalPort(request, globalConfiguration.getServer());
 
         model.put("globalConfiguration", globalConfiguration);
@@ -71,16 +77,18 @@ public class SignatureController {
 
     /**
      * Get files and directories
+     *
      * @return files and directories list
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadFileTree", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<SignatureFileDescriptionEntity> loadFileTree(@RequestBody SignatureFileTreeRequest fileTreeRequest){
+    public List<SignatureFileDescriptionEntity> loadFileTree(@RequestBody SignatureFileTreeRequest fileTreeRequest) {
         return signatureService.getFileList(fileTreeRequest);
     }
 
     /**
      * Get document description
+     *
      * @return document description
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadDocumentDescription", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
@@ -91,39 +99,46 @@ public class SignatureController {
 
     /**
      * Get document page
+     *
      * @return document page
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadDocumentPage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public PageDescriptionEntity loadDocumentPage(@RequestBody LoadDocumentPageRequest loadDocumentPageRequest){
+    public PageDescriptionEntity loadDocumentPage(@RequestBody LoadDocumentPageRequest loadDocumentPageRequest) {
         return signatureService.loadDocumentPage(loadDocumentPageRequest);
     }
 
     /**
+     * Get fonts
+     *
+     * @return list of fonts names
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/getFonts", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<String> getFonts() {
+        return signatureService.getFonts();
+    }
+
+    /**
      * Download document
+     *
      * @param response
      * @return document
      */
     @RequestMapping(method = RequestMethod.GET, value = "/downloadDocument")
     public void downloadDocument(@RequestParam(name = "path") String documentGuid,
-                                 @RequestParam(name = "signed") Boolean signed,
                                  HttpServletResponse response) {
         // get document path
         String fileName = FilenameUtils.getName(documentGuid);
-        // choose directory
-        SignatureConfiguration signatureConfiguration = signatureService.getSignatureConfiguration();
-        String filesDirectory = signed ? signatureConfiguration.getDataDirectory() + OUTPUT_FOLDER : signatureConfiguration.getFilesDirectory();
-        String pathToDownload = String.format("%s%s%s", filesDirectory, File.separator, fileName);
-
         // set response content info
         Utils.addFileDownloadHeaders(response, fileName, null);
 
         long length;
-        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(pathToDownload));
+        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(documentGuid));
              ServletOutputStream outputStream = response.getOutputStream()) {
             // download the document
             length = IOUtils.copyLarge(inputStream, outputStream);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("Exception in downloading document", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
@@ -133,6 +148,7 @@ public class SignatureController {
 
     /**
      * Upload document
+     *
      * @return uploaded document object (the object contains uploaded document guid)
      */
     @RequestMapping(method = RequestMethod.POST, value = "/uploadDocument",
@@ -146,113 +162,112 @@ public class SignatureController {
     }
 
     /**
-     * Get signature image stream - temporarlly workaround used until release of the GroupDocs.Signature 18.5, after release will be removed
+     * Get signature image stream - temporally workaround used until release of the GroupDocs.Signature 18.5, after release will be removed
+     *
      * @return signature image
      */
     @RequestMapping(method = RequestMethod.POST, value = "/loadSignatureImage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public PageDescriptionEntity loadSignatureImage(@RequestBody LoadSignatureImageRequest loadSignatureImageRequest) {
-        try {
-            PageDescriptionEntity loadedPage = new PageDescriptionEntity();
-            File file = new File(loadSignatureImageRequest.getGuid());
-            // get page image
-            FileInputStream fileInputStreamReader = new FileInputStream(file);
-            loadedPage.setData(getStringFromStream(fileInputStreamReader));
-            // return loaded page object
-            return loadedPage;
-        }catch (Exception ex){
+    public SignaturePageEntity loadSignatureImage(@RequestBody LoadSignatureImageRequest loadSignatureImageRequest) {
+        return signatureService.loadSignatureImage(loadSignatureImageRequest);
+    }
+
+    /**
+     * Delete signature file from local storage
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/deleteSignatureFile", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void deleteSignatureFile(@RequestBody DeleteSignatureFileRequest deleteSignatureFileRequest) {
+        signatureService.deleteSignatureFile(deleteSignatureFileRequest);
+    }
+
+    /**
+     * Sign document with signatures
+     *
+     * @return signed document info
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/sign", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public SignedDocumentEntity sign(@RequestBody SignDocumentRequest signDocumentRequest) {
+        List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
+        if (signaturesData == null || signaturesData.isEmpty()) {
+            throw new IllegalArgumentException("Sign data is empty");
+        }
+        return signService.sign(signDocumentRequest);
+    }
+
+    /**
+     * Sign document with signatures and download result without saving
+     *
+     * @return signed document info
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/downloadSigned", consumes = APPLICATION_JSON_VALUE)
+    public void downloadSigned(@RequestBody SignDocumentRequest signDocumentRequest, HttpServletResponse response) {
+        List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
+        if (signaturesData == null || signaturesData.isEmpty()) {
+            throw new IllegalArgumentException("Sign data is empty");
+        }
+
+        // get document path
+        String documentGuid = signDocumentRequest.getGuid();
+        String fileName = FilenameUtils.getName(documentGuid);
+        // set response content info
+        Utils.addFileDownloadHeaders(response, fileName, null);
+
+        long length;
+        try (InputStream inputStream = signService.signByStream(signDocumentRequest);
+             ServletOutputStream outputStream = response.getOutputStream()) {
+            // download the document
+            length = IOUtils.copyLarge(inputStream, outputStream);
+        } catch (Exception ex) {
+            logger.error("Exception in downloading document", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
-    }
 
-    /**
-     * Sign document with digital signature
-     * @return signed document info
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/signDigital", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SignedDocumentEntity signDigital(@RequestBody SignDocumentRequest signDocumentRequest){
-        return signatureService.signDigital(signDocumentRequest);
-    }
-
-
-    /**
-     * Sign document with image signature
-     * @return signed document info
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/signImage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SignedDocumentEntity signImage(@RequestBody SignDocumentRequest signDocumentRequest){
-        return signatureService.signImage(signDocumentRequest);
-    }
-
-    /**
-     * Sign document with stamp signature
-     * @return signed document info
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/signStamp", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SignedDocumentEntity signStamp(@RequestBody SignDocumentRequest signDocumentRequest){
-        return signatureService.signStamp(signDocumentRequest);
-    }
-
-    /**
-     * Sign document with Optical signature
-     * @return signed document info
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/signOptical", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SignedDocumentEntity signOptical(@RequestBody SignDocumentRequest signDocumentRequest){
-        return signatureService.signOptical(signDocumentRequest);
-    }
-
-    /**
-     * Sign document with Text signature
-     * @return signed document info
-     */
-    @RequestMapping(method = RequestMethod.POST, value = "/signText", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SignedDocumentEntity signText(@RequestBody SignDocumentRequest signDocumentRequest){
-        return signatureService.signText(signDocumentRequest);
+        Utils.addFileDownloadLengthHeader(response, length);
     }
 
     /**
      * Save signature image stream
+     *
      * @return image signature
      */
     @RequestMapping(method = RequestMethod.POST, value = "/saveImage", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public FileDescriptionEntity saveImage(@RequestBody SaveImageRequest saveImageRequest){
-        return signatureService.saveImage(saveImageRequest);
+    public FileDescriptionEntity saveImage(@RequestBody SaveImageRequest saveImageRequest) {
+        return saveSignatureService.saveImage(saveImageRequest);
     }
 
     /**
      * Save signature stamp
+     *
      * @return stamp
      */
     @RequestMapping(method = RequestMethod.POST, value = "/saveStamp", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public FileDescriptionEntity saveStamp(@RequestBody SaveStampRequest saveStampRequest) {
-        return signatureService.saveStamp(saveStampRequest);
+        return saveSignatureService.saveStamp(saveStampRequest);
     }
 
     /**
      * Save Optical signature data
+     *
      * @return optical signature
      */
     @RequestMapping(method = RequestMethod.POST, value = "/saveOpticalCode", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public OpticalXmlEntity saveOpticalCode(@RequestBody SaveOpticalCodeRequest saveOpticalCodeRequest){
-        return signatureService.saveOpticalCode(saveOpticalCodeRequest);
+    public OpticalXmlEntity saveOpticalCode(@RequestBody SaveOpticalCodeRequest saveOpticalCodeRequest) {
+        return saveSignatureService.saveOpticalCode(saveOpticalCodeRequest);
     }
 
     /**
      * Save signature text
+     *
      * @return text signature
      */
     @RequestMapping(method = RequestMethod.POST, value = "/saveText", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public TextXmlEntity saveText(@RequestBody SaveTextRequest saveTextRequest){
-        return signatureService.saveText(saveTextRequest);
+    public TextXmlEntity saveText(@RequestBody SaveTextRequest saveTextRequest) {
+        return saveSignatureService.saveText(saveTextRequest);
     }
 }

@@ -9,9 +9,27 @@ import com.groupdocs.ui.model.response.FileDescriptionEntity;
  */
 public class SignatureFileDescriptionEntity extends FileDescriptionEntity {
     private String image;
+    private String text;
+    private String fontColor;
+
+    public String getFontColor() {
+        return fontColor;
+    }
+
+    public void setFontColor(String fontColor) {
+        this.fontColor = fontColor;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 
     /**
-     * Get incoded image Base64 string
+     * Get encoded image Base64 string
      * @return image
      */
     public String getImage() {
@@ -19,7 +37,7 @@ public class SignatureFileDescriptionEntity extends FileDescriptionEntity {
     }
 
     /**
-     * Set incoded image Base64 string
+     * Set encoded image Base64 string
      */
     public void setImage(String image) {
         this.image = image;
