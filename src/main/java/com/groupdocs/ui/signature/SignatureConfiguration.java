@@ -37,6 +37,9 @@ public class SignatureConfiguration extends CommonConfiguration {
     @Value("#{new Boolean('${signature.stampSignature}')}")
     private Boolean stampSignature;
 
+    @Value("#{new Boolean('${signature.handSignature}')}")
+    private Boolean handSignature;
+
     @Value("#{new Boolean('${signature.downloadOriginal}')}")
     private Boolean  downloadOriginal;
 
@@ -150,6 +153,14 @@ public class SignatureConfiguration extends CommonConfiguration {
         this.defaultDocument = defaultDocument;
     }
 
+    public Boolean getHandSignature() {
+        return handSignature;
+    }
+
+    public void setHandSignature(Boolean handSignature) {
+        this.handSignature = handSignature;
+    }
+
     @Override
     public String toString() {
         return super.toString() +
@@ -162,6 +173,7 @@ public class SignatureConfiguration extends CommonConfiguration {
                 ", qrCodeSignature=" + qrCodeSignature +
                 ", barCodeSignature=" + barCodeSignature +
                 ", stampSignature=" + stampSignature +
+                ", handSignature=" + handSignature +
                 ", downloadOriginal=" + downloadOriginal +
                 ", downloadSigned=" + downloadSigned +
                 ", preloadPageCount=" + preloadPageCount +
