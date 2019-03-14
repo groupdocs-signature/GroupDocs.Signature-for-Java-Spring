@@ -6,7 +6,7 @@
 
     <groupId>com.groupdocs.ui</groupId>
     <artifactId>signature-spring</artifactId>
-    <version>1.7.13</version>
+    <version>1.7.14</version>
     <packaging>${packaging.type}</packaging>
 
     <name>GroupDocs.Signature for Java Spring Sample</name>
