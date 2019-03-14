@@ -1,3 +1,4 @@
+![GroupDocs.Signature](https://raw.githubusercontent.com/groupdocs-signature/groupdocs-signature.github.io/master/resources/image/banner.png "GroupDocs.Signature")
 # GroupDocs.Signature-for-Java-Spring Example
 ###### version 1.7.13
 
