@@ -34,7 +34,7 @@ import java.util.Base64;
 import java.util.List;
 
 import static com.groupdocs.ui.signature.SignatureType.*;
-import static com.groupdocs.ui.signature.service.SignatureHandlerFactory.getFullDataPath;
+import static com.groupdocs.ui.signature.service.SignatureHandlerFactory.getFullDataPathStr;
 import static com.groupdocs.ui.util.Utils.getStringFromStream;
 import static com.groupdocs.ui.util.Utils.uploadFile;
 import static com.groupdocs.ui.util.directory.PathConstants.DATA_FOLDER;
@@ -97,7 +97,7 @@ public class SignatureServiceImpl implements SignatureService {
             String signatureTypePath = SignatureDirectory.getPathFromSignatureType(signatureType);
             String rootDirectory = StringUtils.isEmpty(signatureTypePath) ?
                     signatureConfiguration.getFilesDirectory() :
-                    getFullDataPath(signatureConfiguration.getDataDirectory(), signatureTypePath);
+                    getFullDataPathStr(signatureConfiguration.getDataDirectory(), signatureTypePath);
             // get all the files from a directory
             String relDirPath = fileTreeRequest.getPath();
             if (StringUtils.isEmpty(relDirPath)) {
@@ -213,7 +213,7 @@ public class SignatureServiceImpl implements SignatureService {
         String pathFromSignatureType = signatureType == null ? "" : SignatureDirectory.getPathFromSignatureType(signatureType);
         String documentStoragePath = StringUtils.isEmpty(pathFromSignatureType) ?
                 signatureConfiguration.getFilesDirectory() :
-                getFullDataPath(signatureConfiguration.getDataDirectory(), pathFromSignatureType);
+                getFullDataPathStr(signatureConfiguration.getDataDirectory(), pathFromSignatureType);
         // save the file
         String filePath = uploadFile(documentStoragePath, content, url, rewrite);
         // create response data
