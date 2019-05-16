@@ -70,7 +70,7 @@ public class SignatureServiceImpl implements SignatureService {
             logger.error("Can not verify Signature license!");
         }
 
-        // check if data directory is set, if not set new directory
+        // check if the data directory is set, if not set a new directory
         String filesDirectory = signatureConfiguration.getFilesDirectory();
         if (StringUtils.isEmpty(signatureConfiguration.getDataDirectory())) {
             signatureConfiguration.setDataDirectory(filesDirectory + DATA_FOLDER);
