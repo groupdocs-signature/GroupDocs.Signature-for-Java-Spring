@@ -36,8 +36,7 @@ import java.util.List;
 
 import static com.groupdocs.ui.signature.SignatureType.*;
 import static com.groupdocs.ui.signature.service.SignatureHandlerFactory.getFullDataPathStr;
-import static com.groupdocs.ui.util.Utils.getStringFromStream;
-import static com.groupdocs.ui.util.Utils.uploadFile;
+import static com.groupdocs.ui.util.Utils.*;
 import static com.groupdocs.ui.util.directory.PathConstants.DATA_FOLDER;
 
 @Service
