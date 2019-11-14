@@ -28,6 +28,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import static com.groupdocs.ui.exception.PasswordExceptions.INCORRECT_PASSWORD;
+import static com.groupdocs.ui.exception.PasswordExceptions.PASSWORD_REQUIRED;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 
 public class Utils {
@@ -182,6 +184,16 @@ public class Utils {
             httpHeaders.setContentLength(fileLength);
         }
         return httpHeaders;
+    }
+
+    /**
+     * Get correct message for security exceptions
+     *
+     * @param password
+     * @return
+     */
+    public static String getExceptionMessage(String password) {
+        return StringUtils.isEmpty(password) ? PASSWORD_REQUIRED : INCORRECT_PASSWORD;
     }
 
     /**

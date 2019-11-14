@@ -1,6 +1,5 @@
 package com.groupdocs.ui.signature.service;
 
-import com.groupdocs.signature.config.SignatureConfig;
 import com.groupdocs.signature.domain.enums.HorizontalAlignment;
 import com.groupdocs.signature.domain.enums.VerticalAlignment;
 import com.groupdocs.signature.handler.SignatureHandler;
@@ -33,7 +32,6 @@ import javax.xml.bind.JAXBException;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.List;
