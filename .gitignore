@@ -8,7 +8,7 @@ target/*
 vs.bin
 App_Data/*
 node_modules
-src/main/resources/static/assets/*
+src/main/resources/static/*
 !src/main/resources/static/assets/.gitkeep
 node/
 etc/
