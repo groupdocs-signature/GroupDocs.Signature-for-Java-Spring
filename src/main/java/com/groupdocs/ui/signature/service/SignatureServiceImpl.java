@@ -1,7 +1,9 @@
 package com.groupdocs.ui.signature.service;
 
+import com.aspose.words.IncorrectPasswordException;
 import com.groupdocs.signature.domain.DocumentDescription;
 import com.groupdocs.signature.handler.SignatureHandler;
+import com.groupdocs.signature.internal.c.a.s.InvalidPasswordException;
 import com.groupdocs.signature.licensing.License;
 import com.groupdocs.ui.config.GlobalConfiguration;
 import com.groupdocs.ui.exception.TotalGroupDocsException;
@@ -35,8 +37,7 @@ import java.util.List;
 
 import static com.groupdocs.ui.signature.SignatureType.*;
 import static com.groupdocs.ui.signature.service.SignatureHandlerFactory.getFullDataPathStr;
-import static com.groupdocs.ui.util.Utils.getStringFromStream;
-import static com.groupdocs.ui.util.Utils.uploadFile;
+import static com.groupdocs.ui.util.Utils.*;
 import static com.groupdocs.ui.util.directory.PathConstants.DATA_FOLDER;
 
 @Service
@@ -151,7 +152,7 @@ public class SignatureServiceImpl implements SignatureService {
             List<PageDescriptionEntity> pagesDescription = new ArrayList<>();
             // get info about each document page
             boolean loadData = signatureConfiguration.getPreloadPageCount() == 0;
-            for(int i = 1; i <= documentDescription.getPageCount(); i++) {
+            for (int i = 1; i <= documentDescription.getPageCount(); i++) {
                 PageDescriptionEntity description = getPageDescriptionEntity(documentGuid, password, i, loadData);
                 pagesDescription.add(description);
             }
@@ -160,6 +161,8 @@ public class SignatureServiceImpl implements SignatureService {
             loadDocumentEntity.setPages(pagesDescription);
             // return document description
             return loadDocumentEntity;
+        } catch (IncorrectPasswordException | InvalidPasswordException | com.groupdocs.signature.internal.c.a.pd.exceptions.InvalidPasswordException ex) {
+            throw new TotalGroupDocsException(getExceptionMessage(password), ex);
         } catch (Exception ex) {
             logger.error("Exception occurred while loading document description", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);

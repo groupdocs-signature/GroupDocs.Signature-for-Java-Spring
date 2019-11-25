@@ -75,6 +75,12 @@ public class SignatureController {
         return "signature";
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/loadConfig", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public SignatureConfiguration loadConfig() {
+        return signatureService.getSignatureConfiguration();
+    }
+
     /**
      * Get files and directories
      *
