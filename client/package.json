@@ -37,7 +37,7 @@
     "@angular/platform-browser": "^8.2.0",
     "@angular/platform-browser-dynamic": "^8.2.0",
     "@angular/router": "^8.2.0",
-    "@groupdocs.examples.angular/signature": "^0.5.2",
+    "@groupdocs.examples.angular/signature": "^0.5.5",
     "@nrwl/angular": "^8.8.2",
     "core-js": "^2.5.4",
     "rxjs": "~6.4.0",
