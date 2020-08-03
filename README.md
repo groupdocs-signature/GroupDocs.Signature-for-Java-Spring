@@ -175,12 +175,4 @@ Please have a look at the LICENSE.md for more details
 - [Create digital signature](https://github.com/groupdocs-signature/GroupDocs.Signature-for-.NET-WebForms) with .NET WebForms 
 
 
-## Resources
-- **Website:** [www.groupdocs.com](http://www.groupdocs.com)
-- **Product Home:** [GroupDocs.Signature for Java](https://products.groupdocs.com/signature/java)
-- **Product API References:** [GroupDocs.Signature for Java API](https://apireference.groupdocs.com)
-- **Download:** [Download GroupDocs.Signature for Java](http://downloads.groupdocs.com/signature/java)
-- **Documentation:** [GroupDocs.Signature for Java Documentation](https://docs.groupdocs.com/display/signaturejava/Home)
-- **Free Support Forum:** [GroupDocs.Signature for Java Free Support Forum](https://forum.groupdocs.com/c/signature)
-- **Paid Support Helpdesk:** [GroupDocs.Signature for Java Paid Support Helpdesk](https://helpdesk.groupdocs.com)
-- **Blog:** [GroupDocs.Signature for Java Blog](https://blog.groupdocs.com/category/groupdocs-signature-product-family)
+[Home](https://www.groupdocs.com/) | [Product Page](https://products.groupdocs.com/signature/java) | [Documentation](https://docs.groupdocs.com/signature/java/) | [Demos](https://products.groupdocs.app/signature/family) | [API Reference](https://apireference.groupdocs.com/java/signature) | [Examples](https://github.com/groupdocs-Signature/GroupDocs.Signature-for-Java/tree/master/Examples) | [Blog](https://blog.groupdocs.com/category/annotation/) | [Free Support](https://forum.groupdocs.com/c/signature) | [Temporary License](https://purchase.groupdocs.com/temporary-license)
