@@ -1,6 +1,6 @@
 ![Create digital signature with GroupDocs.Signature](https://raw.githubusercontent.com/groupdocs-signature/groupdocs-signature.github.io/master/resources/image/banner.png "GroupDocs.Signature")
 # GroupDocs.Signature for Java Spring Example
-###### version 1.7.26
+###### version 1.7.27
 
 [![Build Status](https://travis-ci.org/groupdocs-signature/GroupDocs.Signature-for-Java-Spring.svg?branch=master)](https://travis-ci.org/groupdocs-signature/GroupDocs.Signature-for-Java-Spring)
 [![Maintainability](https://api.codeclimate.com/v1/badges/001a35ea4151759f0d2a/maintainability)](https://codeclimate.com/github/groupdocs-signature/GroupDocs.Signature-for-Java-Spring/maintainability)
@@ -124,10 +124,10 @@ Download [latest release](https://github.com/groupdocs-signature/GroupDocs.Signa
 **Note**: This method is **recommended** for running this sample behind firewall.
 
 ```bash
-curl -J -L -o release.tar.gz https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Spring/releases/download/1.7.26/release.tar.gz
+curl -J -L -o release.tar.gz https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Spring/releases/download/1.7.27/release.tar.gz
 tar -xvzf release.tar.gz
 cd release
-java -jar signature-spring-1.7.26.jar configuration.yml
+java -jar signature-spring-1.7.27.jar configuration.yml
 ## Open http://localhost:8080/signature/ in your favorite browser.
 ```
 
