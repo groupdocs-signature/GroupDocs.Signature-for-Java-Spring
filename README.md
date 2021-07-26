@@ -6,6 +6,8 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/001a35ea4151759f0d2a/maintainability)](https://codeclimate.com/github/groupdocs-signature/GroupDocs.Signature-for-Java-Spring/maintainability)
 [![GitHub license](https://img.shields.io/github/license/groupdocs-signature/GroupDocs.Signature-for-Java-Spring.svg)](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Spring/blob/master/LICENSE)
 
+:warning: **This repository has moved to https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java/tree/master/Demos/Spring**
+
 ## System Requirements
 - Java 8 (JDK 1.8)
 - Maven 3
